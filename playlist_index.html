@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>专题总览 · 0分类 + 0要看（32 专题 · 298 部）</title>
+<style>
+  :root{
+    /* 影院夜场（默认） */
+    --bg:#100D0B; --card:#1D1612; --border:#3B2D24; --text:#F3EADB; --text2:#B7AA99;
+    --f:#6ED5B4; --f-deep:#A6EDD4; --f-soft:#14302a;
+    --y:#E8C87A; --y-deep:#F4DC9F; --y-soft:#372c17;
+    --chip-bg:#2B211A; --chip-fg:#D8CBB8;
+    --ch2-bg:#14302a; --ch2-fg:#A6EDD4;
+    --ch3-bg:#372c17; --ch3-fg:#F0D79A;
+    --ch4-bg:#341F1F; --ch4-fg:#EC9E9E;
+    --creps-bg:#332B1B; --creps-fg:#F0D79A;
+    --li:#E7DCC9; --row-hover:#262017; --mark-bg:#6B5510;
+    --red:#C0392B; --gold:#E8C87A; --gold-soft:rgba(232,200,122,0.35);
+    --strip:#2A1F16; --hole:#100D0B;
+    --glow1:rgba(220,140,70,0.13); --glow2:rgba(190,70,60,0.10);
+    --input-bg:#201712;
+  }
+  :root[data-theme="light"]{
+    /* 影院日场 */
+    --bg:#F3EEE3; --card:#FFFDF7; --border:#DDD2BD; --text:#221A11; --text2:#6F6656;
+    --f:#2E7A68; --f-deep:#1C5A4B; --f-soft:#E1EFE8;
+    --y:#A97A28; --y-deep:#8A5E1A; --y-soft:#F8EDD9;
+    --chip-bg:#EFE9DA; --chip-fg:#5C5343;
+    --ch2-bg:#E1EFE8; --ch2-fg:#1C5A4B;
+    --ch3-bg:#F2E8D0; --ch3-fg:#7A5B24;
+    --ch4-bg:#F2E0E0; --ch4-fg:#8A3A3A;
+    --creps-bg:#F6ECD6; --creps-fg:#7A5B24;
+    --li:#3A3228; --row-hover:#F6F1E4; --mark-bg:#F5E09A;
+    --red:#A83327; --gold:#A97A28; --gold-soft:rgba(169,122,40,0.30);
+    --strip:#E7DCC5; --hole:#F3EEE3;
+    --glow1:rgba(180,120,50,0.08); --glow2:rgba(170,80,60,0.06);
+    --input-bg:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{color:var(--text);font-family:'PingFang SC','Microsoft YaHei','Segoe UI',Arial,sans-serif;line-height:1.6;
+    background:
+      radial-gradient(1100px 460px at 50% -6%, var(--glow1), transparent 62%),
+      radial-gradient(800px 380px at 88% -4%, var(--glow2), transparent 55%),
+      var(--bg);
+    padding:20px 14px 46px;transition:background .3s,color .3s;}
+  .wrap{max-width:1200px;margin:0 auto;}
+
+  /* filmstrip decoration */
+  .filmstrip{height:18px;margin:2px 0 14px;border-radius:4px;position:relative;overflow:hidden;background:var(--strip);}
+  .filmstrip::after{content:'';position:absolute;left:0;right:0;top:5px;height:8px;
+    background:radial-gradient(circle 3.5px at 9px 4px, var(--hole) 98%, transparent 100%);
+    background-size:22px 8px;background-repeat:repeat-x;}
+
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;}
+  h1{font-size:23px;font-weight:800;letter-spacing:1px;color:var(--gold);
+    text-shadow:0 0 14px var(--gold-soft);}
+  h1 .hl-f{color:var(--f);text-shadow:0 0 12px var(--f-soft);}
+  h1 .hl-y{color:var(--y);text-shadow:0 0 12px var(--gold-soft);}
+  h1 small{display:block;font-size:12px;font-weight:400;color:var(--text2);margin-top:6px;letter-spacing:.3px;text-shadow:none;}
+  .toggle{flex:0 0 auto;border:1px solid var(--border);background:var(--input-bg);color:var(--text);font-size:12.5px;padding:7px 14px;border-radius:999px;cursor:pointer;margin-top:2px;white-space:nowrap;}
+  .toggle:hover{border-color:var(--gold);color:var(--gold);}
+
+  /* stats = 排片牌 */
+  .stats{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 6px;}
+  .stat{flex:1 1 150px;min-width:130px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;position:relative;overflow:hidden;}
+  .stat .k{font-size:11.5px;color:var(--text2);letter-spacing:.4px;}
+  .stat .v{font-size:24px;font-weight:800;margin-top:2px;color:var(--gold);}
+  .stat .v span{font-size:12px;font-weight:400;color:var(--text2);}
+  .stat.acf .v{color:var(--f);}
+  .stat .accent{position:absolute;left:0;top:0;bottom:0;width:5px;}
+  .stat.acf .accent{background:var(--f);}
+  .stat.acy .accent{background:var(--y);}
+  .stat.acm .accent{background:linear-gradient(180deg,var(--f),var(--y));}
+
+  /* 幕次导航 */
+  .navtabs{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px;}
+  .navtabs button{border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:12.5px;padding:8px 14px;border-radius:999px;cursor:pointer;}
+  .navtabs button:hover{border-color:var(--gold);color:var(--gold);}
+  .navtabs button b{font-weight:700;}
+
+  .toolbar{position:sticky;top:0;z-index:30;background:var(--bg);padding:10px 0 12px;border-bottom:1px solid var(--border);margin-top:10px;}
+.toolbar{display:flex;flex-direction:column;}
+.tb-body{display:flex;flex-direction:column;}
+.tb-toggle{align-self:flex-end;background:var(--chip-bg);color:var(--chip-fg);border:1px solid var(--border);border-radius:999px;padding:4px 14px;font-size:11.5px;cursor:pointer;letter-spacing:1px;margin-top:2px;flex:0 0 auto;}
+.tb-toggle:hover{border-color:var(--gold);color:var(--gold);}
+.toolbar.collapsed{padding:6px 10px;}
+.toolbar.collapsed .tb-body{display:none;}
+.toolbar.collapsed .tb-toggle{margin-top:0;}
+
+  .tbrow{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+  .search{flex:1 1 240px;min-width:190px;padding:9px 14px;border:1px solid var(--border);border-radius:999px;background:var(--input-bg);color:var(--text);font-size:13.5px;outline:none;}
+  .search:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-soft);}
+  .seg{display:flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--input-bg);}
+  .seg button{border:none;background:transparent;color:var(--text2);font-size:12.5px;padding:8px 13px;cursor:pointer;}
+  .seg button.on{background:var(--f);color:#0A0A08;font-weight:600;}
+  .seg button.onY{background:var(--y);color:#1A1308;font-weight:600;}
+  select.search{max-width:170px;border-radius:999px;}
+  .chk{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--text2);cursor:pointer;padding:6px 11px;border:1px solid var(--border);border-radius:999px;background:var(--card);}
+  .chk input{accent-color:var(--gold);}
+  .reset{border:1px solid var(--border);background:var(--card);color:var(--text);font-size:12.5px;padding:7px 13px;border-radius:999px;cursor:pointer;}
+  .reset:hover{border-color:var(--gold);color:var(--gold);}
+  .wbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:12.5px;color:var(--text2);margin-top:9px;}
+  .wbar .pill{display:inline-flex;gap:6px;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:999px;padding:4px 12px;}
+  .pill .df{color:var(--f);font-weight:700;}
+  .pill .dy{color:var(--y);font-weight:700;}
+
+  .results{display:none;margin:16px 0 4px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;}
+  .results.show{display:block;}
+  .results h3{font-size:14px;margin-bottom:4px;color:var(--gold);}
+  .rescap{font-size:11.5px;color:var(--text2);margin-bottom:8px;}
+  .rrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:7px 4px;border-bottom:1px dashed var(--border);font-size:13px;}
+  .rrow:last-child{border-bottom:none;}
+  .rrow:hover{background:var(--row-hover);border-radius:8px;}
+  .rb{font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:999px;color:#0A0A08;}
+  .rb.f{background:var(--f);}
+  .rb.y{background:var(--y);}
+  .rname{font-weight:600;}
+  .rname mark{background:var(--mark-bg);color:inherit;border-radius:3px;padding:0 2px;}
+  .rorig{font-size:11.5px;color:var(--text2);}
+  .rtag{font-size:11px;color:var(--text2);}
+  .rtopic{font-size:11px;color:var(--text2);background:var(--chip-bg);border-radius:6px;padding:1px 7px;}
+  .wbtn{margin-left:auto;border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:11.5px;padding:4px 12px;border-radius:999px;cursor:pointer;flex:0 0 auto;}
+  .wbtn:hover{border-color:var(--gold);color:var(--gold);}
+  .wbtn.on{background:var(--f);color:#0A0A08;border-color:var(--f);}
+  .wbtn.onY{background:var(--y);color:#1A1308;border-color:var(--y);}
+  .wbtn.onY.on{background:var(--y);border-color:var(--y);}
+
+  .sec{margin:30px 0 6px;scroll-margin-top:110px;}
+  .sec-head{display:flex;align-items:center;gap:10px;}
+  .sec-no{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:32px;padding:0 8px;border-radius:9px;font-weight:800;font-size:15px;color:#0A0A08;}
+  .sec-no.f{background:var(--f);}
+  .sec-no.y{background:var(--y);}
+  .sec-head h2{font-size:18px;font-weight:700;color:var(--gold);text-shadow:0 0 10px var(--gold-soft);}
+  .sec-sub{font-size:12.5px;color:var(--text2);margin:4px 0 0 42px;}
+
+  .group{margin:14px 0 4px;}
+  .ghead{display:flex;align-items:baseline;gap:10px;margin:10px 0 8px;}
+  .gname{font-size:14px;font-weight:700;color:var(--gold);}
+  .gsub{font-size:11.5px;color:var(--text2);}
+  .grid{display:flex;flex-wrap:wrap;gap:12px;}
+
+  /* 影片卡 = 海报架 */
+  .tcard{flex:1 1 262px;min-width:250px;border-radius:14px;padding:13px 14px 12px;position:relative;background:var(--card);border:1px solid var(--border);overflow:hidden;}
+  .tcard.fc{border-top:4px solid var(--f);}
+  .tcard.yc{border-top:4px solid var(--y);}
+  .tcard.open.fc{border-color:var(--f);box-shadow:0 0 0 2px var(--f-soft);}
+  .tcard.open.yc{border-color:var(--y);box-shadow:0 0 0 2px var(--gold-soft);}
+  .src{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 9px;border-radius:999px;color:#0A0A08;position:absolute;top:10px;right:12px;}
+  .src-f{background:var(--f);}
+  .src-y{background:var(--y);}
+  .tname{font-size:15.5px;font-weight:800;margin:2px 44px 0 0;color:var(--text);}
+  .tname .ten{display:block;font-size:11px;color:var(--text2);font-weight:400;}
+  .tmeta{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 7px;}
+  .chip{font-size:11px;padding:1px 8px;border-radius:999px;background:var(--chip-bg);color:var(--chip-fg);white-space:nowrap;}
+  .ch2{background:var(--ch2-bg);color:var(--ch2-fg);}
+  .ch3{background:var(--ch3-bg);color:var(--ch3-fg);}
+  .ch4{background:var(--ch4-bg);color:var(--ch4-fg);}
+  .tnote{font-size:11.5px;color:var(--text2);}
+  .prog{margin-top:9px;}
+  .prog-top{display:flex;justify-content:space-between;font-size:11.5px;color:var(--text2);margin-bottom:3px;}
+  .prog-top b{color:var(--text);}
+  .prog-track{height:7px;background:var(--chip-bg);border-radius:999px;overflow:hidden;}
+  .prog-fill{height:100%;border-radius:999px;transition:width .3s;}
+  .fc .prog-fill{background:var(--f);}
+  .yc .prog-fill{background:var(--y);}
+  .expand-btn{display:block;width:100%;margin-top:10px;padding:7px 10px;border:1px dashed var(--border);background:transparent;color:var(--text2);font-size:12px;border-radius:9px;cursor:pointer;text-align:center;}
+  .expand-btn:hover{color:var(--gold);border-color:var(--gold);}
+  .tcard.open .expand-btn{color:var(--gold);border-style:solid;}
+  .tcard.open.yc .expand-btn{color:var(--gold);}
+
+  .films{display:none;margin-top:10px;border-top:1px dashed var(--border);padding-top:8px;max-height:360px;overflow:auto;}
+  .tcard.open .films{display:block;}
+  .frow{display:flex;align-items:center;gap:8px;padding:5px 3px;border-bottom:1px dashed var(--border);font-size:12.5px;border-radius:6px;}
+  .frow:last-child{border-bottom:none;}
+  .frow:hover{background:var(--row-hover);}
+  .fno{font-size:10px;color:var(--gold);flex:0 0 20px;text-align:right;font-variant-numeric:tabular-nums;}
+  .fy{font-size:11px;color:#9DB8E8;background:#23324A;border-radius:4px;padding:0 5px;flex:0 0 auto;font-variant-numeric:tabular-nums;}
+  .fy-na{background:var(--chip-bg);color:var(--text2);}
+  :root[data-theme="light"] .fy{background:#EEF3FB;color:#2C4A7C;}
+  .ft{font-weight:600;}
+  .fo{font-size:11px;color:var(--text2);}
+  .fx{font-size:10.5px;color:#D9B98A;background:#2F281C;border-radius:4px;padding:0 5px;}
+  .fdur{font-size:10.5px;color:#8BC8EA;background:rgba(139,200,234,.12);border-radius:4px;padding:0 5px;white-space:nowrap;}
+  :root[data-theme="light"] .fx{background:#FDF6E3;color:#8A5A20;}
+  .fscore{font-size:11px;color:var(--ch2-fg);background:var(--ch2-bg);border-radius:4px;padding:0 5px;white-space:nowrap;font-weight:600;}
+
+  .insight{margin-top:30px;padding:16px 18px;background:var(--card);border:1px solid var(--border);border-radius:14px;}
+  .insight h3{font-size:15px;margin-bottom:8px;color:var(--gold);}
+  .insight li{font-size:13px;margin:5px 0 5px 18px;color:var(--li);}
+  .insight b.f{color:var(--f);}
+  .insight b.y{color:var(--y);}
+  .foot{font-size:11.5px;color:var(--text2);margin-top:24px;line-height:1.7;border-top:1px dashed var(--border);padding-top:12px;}
+  .foot b{color:var(--text);}
+  .empty{color:var(--text2);font-size:13px;padding:12px 2px;}
+  /* 回到顶端 */
+  .toTop{position:fixed;right:22px;bottom:26px;z-index:60;width:48px;height:48px;border-radius:50%;border:1px solid var(--border);background:var(--card);color:var(--gold);font-size:20px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(0,0,0,.35);opacity:0;transform:translateY(14px);pointer-events:none;transition:opacity .25s,transform .25s,background .25s,color .25s,border-color .25s;}
+  .toTop.show{opacity:1;transform:translateY(0);pointer-events:auto;}
+  .toTop:hover{border-color:var(--gold);color:#0A0A08;background:var(--gold);}
+  @media (max-width:600px){
+    .toTop{right:14px;bottom:18px;width:44px;height:44px;font-size:18px;}
+    body{padding:16px 10px;}
+    h1{font-size:19px;}
+    .tcard{min-width:100%;}
+    .topbar{flex-direction:column;}
+    .navtabs button{flex:1 1 auto;}
+  }
+
+  /* 目录 · 放映节目单 */
+  .toc{margin:12px 0 8px;border:1px solid var(--border);border-radius:14px;padding:12px 14px 10px;
+       background:linear-gradient(135deg, rgba(232,200,122,.07), rgba(255,255,255,.02));}
+  .toc-head{display:flex;align-items:baseline;gap:8px;font-size:14.5px;font-weight:800;color:var(--gold);letter-spacing:2px;}
+  .toc-ico{font-size:13px;color:var(--gold);}
+  .toc-sub{font-size:11px;color:var(--text2);font-weight:400;letter-spacing:.5px;}
+  .toc-body{display:flex;flex-wrap:wrap;gap:10px;margin-top:9px;}
+  .toc-act{flex:1 1 30%;min-width:236px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:8px 10px;box-sizing:border-box;}
+  .toc-actname{font-size:12px;font-weight:700;color:var(--text);margin-bottom:7px;letter-spacing:1px;}
+  .toc-items{display:flex;flex-wrap:wrap;gap:6px;}
+  .toc-item{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border:1px solid var(--border);border-radius:999px;background:var(--card);color:var(--text);font-size:12px;line-height:1;cursor:pointer;transition:border-color .15s,color .15s,transform .15s;}
+  .toc-item:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-1px);}
+  .toc-item i{font-style:normal;color:var(--text2);font-size:10.5px;margin-left:2px;}
+  .toc-n{font-size:10.5px;color:var(--gold);background:rgba(232,200,122,.14);border-radius:999px;padding:2px 7px;}
+
+  /* 第四幕 · 0要看 全片单 */
+  .yall-head{font-size:12px;color:var(--text2);margin-bottom:8px;letter-spacing:.5px;}
+  .yrow{display:flex;align-items:center;gap:8px;padding:6px 10px;border-bottom:1px dashed var(--border);font-size:12.5px;flex-wrap:wrap;}
+  .yrow:hover{background:var(--row-hover);}
+  .ynum{color:var(--text2);font-size:11px;min-width:22px;}
+  .yyear{color:var(--gold);font-weight:700;min-width:44px;}
+  .yname{color:var(--text);font-weight:600;}
+  .yorig{color:var(--text2);font-size:11.5px;}
+  .yscore{color:var(--gold);font-size:11.5px;background:rgba(232,200,122,.14);border-radius:999px;padding:2px 8px;white-space:nowrap;}
+  .ychips{display:inline-flex;gap:5px;}
+  .ychip{color:var(--text2);font-size:10.5px;border:1px solid var(--border);border-radius:999px;padding:1px 7px;white-space:nowrap;}
+  .ynote{color:var(--text2);font-size:11px;}
+
+  /* 随机选一部 弹层 */
+  .rand{background:linear-gradient(135deg,#c9a24b,#e2c37c);color:#17120a;border:none;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(232,200,122,.25);}
+  .rand:hover{filter:brightness(1.08);}
+  .rmask{position:fixed;inset:0;background:rgba(0,0,0,.74);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:99;padding:16px;}
+#randWrap{z-index:100;}
+#zoomWrap{z-index:101;}
+#editWrap{z-index:105;}
+  .rmask.show{display:flex;}
+  .randcard{background:linear-gradient(160deg,var(--card),var(--bg));border:1px solid var(--border);border-radius:18px;max-width:560px;width:100%;padding:26px 26px 22px;box-shadow:0 20px 60px rgba(0,0,0,.45);}
+  .rand-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .rand-tag{font-size:11px;letter-spacing:2px;color:var(--gold);border:1px solid rgba(232,200,122,.4);border-radius:999px;padding:3px 12px;}
+  .rand-close{cursor:pointer;color:var(--text2);font-size:18px;background:none;border:none;line-height:1;padding:2px 6px;}
+  .rand-title{font-size:15px;color:var(--text2);letter-spacing:1px;margin-bottom:12px;}
+  .rand-name{font-size:32px;font-weight:800;color:var(--gold);line-height:1.2;}
+  .rand-orig{font-size:14px;color:var(--text2);margin-top:4px;}
+  .rand-meta{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0;}
+  .rand-meta .chip{color:var(--gold);font-size:12px;background:rgba(232,200,122,.14);border-radius:999px;padding:3px 11px;}
+  .rand-meta .chip.plain{color:var(--chip-fg);background:var(--chip-bg);border:1px solid var(--border);}
+.chip.dur{color:#8BC8EA;background:rgba(139,200,234,.14);border:1px solid rgba(139,200,234,.35);}
+.rand-meta .chip.dur{color:#8BC8EA;background:rgba(139,200,234,.14);border:1px solid rgba(139,200,234,.35);}
+  .rand-note{font-size:13px;color:var(--text2);line-height:1.6;border-top:1px dashed var(--border);padding-top:12px;margin-top:2px;}
+  .rand-actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap;}
+  .rand-actions button{cursor:pointer;border-radius:999px;padding:10px 18px;font-size:13.5px;font-weight:600;border:none;}
+  .rand-again{background:rgba(232,200,122,.16);color:var(--gold);border:1px solid rgba(232,200,122,.5)!important;}
+  .rand-mark{background:linear-gradient(135deg,#c9a24b,#e2c37c);color:#17120a;}
+  .rand-close2{background:var(--chip-bg);color:var(--chip-fg);}
+  .rand-empty{text-align:center;padding:30px 10px;color:var(--gold);font-size:16px;}
+.ebtn{background:var(--chip-bg);border:1px solid var(--border);color:var(--chip-fg);border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:13px;flex:0 0 auto;line-height:1;}
+.ebtn:hover{color:var(--gold);border-color:rgba(232,200,122,.5);}
+.editcard{background:linear-gradient(160deg,var(--card),var(--bg));border:1px solid var(--border);border-radius:18px;max-width:600px;width:100%;padding:24px;box-shadow:0 20px 60px rgba(0,0,0,.45);}
+.edit-name{font-size:21px;font-weight:700;color:var(--gold);margin:4px 0 14px;}
+.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;}
+.edit-grid label{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--text2);letter-spacing:1px;}
+.edit-grid input{background:var(--input-bg);border:1px solid var(--border);border-radius:9px;color:var(--text);padding:8px 10px;font-size:13px;outline:none;}
+.edit-grid input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,200,122,.12);}
+.edit-hint{font-size:11.5px;color:var(--text2);margin:12px 0 0;line-height:1.6;}
+.zoomcard{background:linear-gradient(165deg,var(--card),var(--bg));border:1px solid var(--border);border-radius:20px;max-width:880px;width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.45);}
+.zoom-head{padding:4px 2px 0;}
+.zoom-title{font-size:27px;font-weight:800;color:var(--gold);letter-spacing:1px;}
+.zoom-meta{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:9px;color:var(--text2);font-size:12.5px;}
+.zoom-note{margin-top:6px;color:var(--text2);font-size:12.5px;line-height:1.6;width:100%;}
+.zoom-list{overflow-y:auto;margin-top:10px;border-top:1px solid var(--border);padding-top:4px;flex:1 1 auto;min-height:0;}
+.zoom-list .frow{font-size:13.5px;padding:8px 4px;}
+.zoom-list .frow .ft{font-size:14px;}
+.tcard{cursor:zoom-in;scroll-margin-top:78px;}
+
+@media(max-width:520px){.edit-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+  <div class="rmask" id="randWrap"></div>
+  <div class="rmask" id="editWrap">
+    <div class="editcard">
+      <div class="rand-top"><span class="rand-tag">✎ 编辑影片信息</span><button class="rand-close" type="button" data-e="close" aria-label="关闭">✕</button></div>
+      <div class="edit-name" id="editName"></div>
+      <div class="edit-grid">
+        <label>上映年份<input id="edY" type="text" placeholder="如 1988"></label>
+        <label>评分<input id="edS" type="text" placeholder="如 豆瓣 8.7 / IMDb 7.2 / 暂无评分"></label>
+        <label>时长<input id="edM" type="text" placeholder="如 92分钟"></label>
+        <label>地区<input id="edR" type="text" placeholder="如 美国"></label>
+        <label>年代<input id="edD" type="text" placeholder="如 1980年代"></label>
+        <label>类型<input id="edG" type="text" placeholder="如 剧情/悬疑"></label>
+        <label>导演/备注<input id="edN" type="text" placeholder="导演或备注"></label>
+        <label>外文名<input id="edO" type="text" placeholder="原文名"></label>
+      </div>
+      <div class="edit-hint">修改保存到本机浏览器（即时生效，覆盖原数据展示）；评分/时长修改会同步影响筛选与随机抽取。点「恢复默认」可还原原始数据。</div>
+      <div class="rand-actions">
+        <button class="rand-again" id="edSave" type="button">✓ 保存修改</button>
+        <button class="rand-close2" id="edClear" type="button">↺ 恢复默认</button>
+        <button class="rand-close2" id="edCancel" type="button">关闭</button>
+      </div>
+    </div>
+  </div>
+  <div class="rmask" id="zoomWrap">
+    <div class="zoomcard">
+      <div class="rand-top"><span class="rand-tag" id="zoomTag">专题</span><button class="rand-close" type="button" data-z="close" aria-label="关闭">✕</button></div>
+      <div class="zoom-head">
+        <div class="zoom-title" id="zoomTitle"></div>
+        <div class="zoom-meta" id="zoomMeta"></div>
+      </div>
+      <div class="zoom-list" id="zoomList"></div>
+      <div class="rand-actions"><button class="rand-close2" type="button" data-z="close2">关闭</button></div>
+    </div>
+  </div>
+
+<div class="wrap">
+  <div class="filmstrip"></div>
+  <div class="topbar">
+    <h1>★ <span class="hl-f">0分类</span> × <span class="hl-y">0要看</span> ★ 专题总览 · 24 场
+      <small>影院风格片单 · 百度网盘 2026-09-03 更新｜0分类：11 组导演合集 + 2 组主题合集（254 部）｜0要看：101 部（其中 11 组大师与系列专题）</small>
+    </h1>
+    <button class="toggle" id="themeToggle" type="button">深色模式</button>
+  </div>
+
+  <div class="toc" id="tocSec">
+    <div class="toc-head"><span class="toc-ico">☰</span>放映节目单 · 目录<span class="toc-sub">点击条目直达对应专题 · 共 24 场</span></div>
+    <div class="toc-body" id="tocBody"></div>
+  </div>
+
+  <div class="stats">
+    <div class="stat acf"><div class="k">0分类 · 导演合集</div><div class="v">11 <span>组</span></div><div class="accent"></div></div>
+    <div class="stat acf"><div class="k">0分类 · 主题合集</div><div class="v">2 <span>组</span></div><div class="accent"></div></div>
+    <div class="stat acy"><div class="k">0要看 · 大师专题</div><div class="v">11 <span>组</span></div><div class="accent"></div></div>
+    <div class="stat acm"><div class="k">可标记影片</div><div class="v"><span id="statTot"></span></div><div class="accent"></div></div>
+  </div>
+
+  <div class="navtabs">
+    <button data-scroll="secA">第一幕 · 0分类导演合集 <b>11</b></button>
+    <button data-scroll="secB">第二幕 · 0分类主题合集 <b>2</b></button>
+    <button data-scroll="secC">第三幕 · 0要看大师专题 <b>11</b></button>
+    <button data-scroll="secD">第四幕 · 全片单 <b>101</b></button>
+    <button data-scroll="insightSec">洞察</button>
+  </div>
+
+  <div class="toolbar">
+    <div class="tb-body">
+    <div class="tbrow">
+      <input class="search" id="q" type="text" placeholder="🔍 搜索片名 / 导演 / 专题…">
+      <div class="seg" id="srcSeg">
+        <button data-src="all" class="on">全部</button>
+        <button data-src="f">0分类</button>
+        <button data-src="y">0要看</button>
+      </div>
+      <select class="search" id="regionSel">
+        <option value="">全部地区</option>
+        <option value="北美">北美</option><option value="欧洲">欧洲</option>
+        <option value="拉美">拉美</option><option value="东亚">东亚</option>
+        <option value="苏联">苏联地区</option>
+      </select>
+      <select class="search" id="scoreSel">
+        <option value="">全部评分</option>
+        <option value="8+">8.0 分以上</option>
+        <option value="7-8">7.0–7.9 分</option>
+        <option value="6-7">6.0–6.9 分</option>
+        <option value="0-6">6.0 分以下</option>
+        <option value="0">暂无评分</option>
+      </select>
+      <select class="search" id="durSel" title="按时长筛选">
+        <option value="">全部时长</option>
+        <option value="0-60">短片 ≤60分钟</option>
+        <option value="61-90">61–90分钟</option>
+        <option value="91-120">91–120分钟</option>
+        <option value="121-150">121–150分钟</option>
+        <option value="151-">151分钟以上</option>
+        <option value="0">暂无时长</option>
+      </select>
+      <label class="chk"><input type="checkbox" id="onlyUnwatched"> 只看未看</label>
+      <button class="reset" id="resetBtn" type="button">重置</button>
+      <select class="search" id="randScoreSel" title="随机抽取的评分区间">
+        <option value="">随机·全部评分</option>
+        <option value="8+">随机·8.0 以上</option>
+        <option value="7-8">随机·7.0–7.9</option>
+        <option value="6-7">随机·6.0–6.9</option>
+        <option value="0-6">随机·6.0 以下</option>
+        <option value="0">随机·暂无评分</option>
+      </select>
+      <select class="search" id="randDurSel" title="随机抽取的时长区间">
+        <option value="">随机·全部时长</option>
+        <option value="0-60">随机·短片 ≤60分钟</option>
+        <option value="61-90">随机·61–90分钟</option>
+        <option value="91-120">随机·91–120分钟</option>
+        <option value="121-150">随机·121–150分钟</option>
+        <option value="151-">随机·151分钟以上</option>
+        <option value="0">随机·暂无时长</option>
+      </select>
+      <button class="rand" id="randBtn" type="button">随机选一部（未看）</button>
+    </div>
+    <div class="wbar">
+      <span class="pill">0要看 已看 <span class="dy" id="wcountY">0</span>/101</span>
+      <span class="pill">0分类 已看 <span class="df" id="wcountF">0</span>/254</span>
+      <span class="pill" id="fcount" style="display:none;"></span>
+      <span style="margin-left:auto;font-size:11.5px;">点击卡片展开影片，行尾按钮标记已看</span>
+    </div>
+    </div>
+    <button class="tb-toggle" id="tbToggle" type="button" title="收起工具栏">▲</button>
+  </div>
+
+  <div class="results" id="results">
+    <h3 id="resTitle">搜索结果</h3>
+    <div class="rescap" id="resCap">点击右侧按钮标记已看</div>
+    <div id="resList"></div>
+  </div>
+
+  <div id="browse"></div>
+
+  <div class="sec" id="secD">
+    <div class="sec-head"><span class="sec-no y">Ⅳ</span><h2>0要看 · 全片单（101 部）</h2></div>
+    <div class="sec-sub">完整 101 部 · 按上映时间排序 · 行尾按钮标记已看</div>
+    <div id="yallList"></div>
+  </div>
+
+  <div class="insight" id="insightSec">
+    <h3>幕间 · 交叉洞察</h3>
+    <ul>
+      <li><b>0分类 移入 0要看 后删减</b>：导演合集由 19 组减至 11 组（移除 吕美特/多兰/斯科利莫夫斯基/阿基多/路易·马勒/库斯图里卡/贾樟柯/侯孝贤/帕拉杰诺夫），影片共 254 部（完整同步网盘，本次补全分页缺失条目）；同时<b class="f">新增「三船敏郎」13 部</b>（含 4 部稀有收藏），补强日本演员/武士片视角。</li>
+      <li><b>两处题材呼应</b>：0分类「恐怖片」主题 ↔ 0要看《困惑的浪漫3》（邪典恐怖）；0分类「90 分钟佳作」↔ 0要看 大量中短片；意大利电影（<b class="f">费雷里</b> ↔ 0要看 新现实主义/维斯康蒂）与日本电影（<b class="f">团鬼六 / 三船敏郎</b> ↔ 0要看 大逃杀·砂之女）仍是交集热点。</li>
+      <li><b>视角互补</b>：0分类 11 组为「导演中心」收藏，0要看 11 组为「影史/题材母题」专题（芬奇、李沧东、雷伊、金棕榈、黑色电影、战争与人等），两者并置可交叉检索同一母题。</li>
+    </ul>
+  </div>
+
+  <div class="filmstrip" style="margin-top:26px;"></div>
+  <div class="foot">
+    演职员表 · ① 已观看标记保存在本机浏览器（0分类 <b>watchf:</b> / 0要看 <b>watch:</b>，与观影指南合并版互通）；② 搜索框支持片名/原名/导演/专题检索，命中文字高亮；来源与地区筛选、只看未看可组合使用；③ 点击卡片底部按钮展开影片列表；深色模式右上角切换或跟随系统。
+  </div>
+<button class="toTop" id="toTop" type="button" title="回到顶端" aria-label="回到顶端">↑</button>
+</div>
+
+<script>
+const DATA = {"FT":[{"name":"梅雅·黛伦","en":"Maya Deren","country":"美国","count":"10 部","span":"1943–2003","note":"实验电影先驱；含 2003 年纪录片","remake":false,"theme":false,"films":[{"y":"1943","t":"午后的迷惘","o":"Meshes of the Afternoon","x":"","s":"豆瓣 8.8","m":"14分钟"},{"y":"1943","t":"女巫的翻绳游戏","o":"Witch's Cradle","x":"","s":"豆瓣 7.0","m":"12分钟"},{"y":"1944","t":"猫的私生活","o":"The Private Life of a Cat","x":"","s":"豆瓣 8.2","m":"22分钟"},{"y":"1944","t":"在陆地上","o":"At Land","x":"","s":"豆瓣 8.6","m":"15分钟"},{"y":"1945","t":"摄影机舞蹈习作","o":"A Study in Choreography for Camera","x":"","s":"豆瓣 7.7","m":"2分20秒"},{"y":"1946","t":"时间变形中的仪式","o":"Ritual in Transfigured Time","x":"","s":"豆瓣 7.9","m":"15分钟"},{"y":"1948","t":"暴力的冥想","o":"Meditation on Violence","x":"","s":"豆瓣 6.4","m":"12分钟"},{"y":"1951","t":"梦游者的共眠","o":"Ensemble for Somnambulists","x":"","s":"豆瓣 7.3","m":"6分18秒"},{"y":"1958","t":"夜之眼","o":"The Very Eye of Night","x":"","s":"豆瓣 7.2","m":"15分钟"},{"y":"2003","t":"神圣骑士：活着的海地天神","o":"Divine Horsemen: The Living Gods of Haiti","x":"纪录片","s":"豆瓣 7.1","m":"51分钟"}]},{"name":"南·戈尔丁","en":"Nan Goldin","country":"美国","count":"5 部","span":"1986–2020","note":"摄影家/艺术家相关影片","remake":false,"theme":false,"films":[{"y":"1986","t":"性依赖的叙事曲","o":"The Ballad of Sexual Dependency","x":"幻灯片/影片","s":"豆瓣 8.6","m":"43分钟"},{"y":"1996","t":"我是你的镜子","o":"I'll Be Your Mirror","x":"纪录片","s":"IMDb 7.0","m":"50分钟"},{"y":"1997","t":"南·戈尔丁：在我的生命中","o":"Nan Goldin: In My Life","x":"纪录片","s":"暂无评分","m":"暂无"},{"y":"2020","t":"塞壬","o":"Sirens","x":"短片","s":"暂无评分","m":"暂无"},{"y":"—","t":"The Other Side","o":"1992–2021 影像装置","x":"影像装置","s":"暂无评分","m":"暂无"}]},{"name":"约翰·卡萨维蒂","en":"John Cassavetes","country":"美国","count":"38 部","span":"1951–2000","note":"独立电影；含其执导/参演作品与纪录片·来源@公众号电影学报","remake":false,"theme":false,"films":[{"y":"1951","t":"十四小时","o":"Fourteen Hours","x":"","s":"IMDb 7.1","m":"92分钟"},{"y":"1953","t":"通用电气剧场","o":"G.E. True Theater","x":"","s":"IMDb 6.8","m":"暂无"},{"y":"1955","t":"惊心重重","o":"The Night Holds Terror","x":"","s":"IMDb 6.1","m":"86分钟"},{"y":"1956","t":"街头争霸","o":"Crime in the Streets","x":"","s":"IMDb 6.6","m":"91分钟"},{"y":"1957","t":"友情深似海","o":"Edge of the City","x":"","s":"IMDb 7.2","m":"85分钟"},{"y":"1958","t":"影子","o":"Shadows","x":"","s":"豆瓣 7.6","m":"81分钟"},{"y":"1958","t":"风中双骑","o":"Saddle The Wind","x":"","s":"IMDb 6.6","m":"84分钟"},{"y":"1959","t":"爵士神探强尼·斯塔加图","o":"Johnny Staccato","x":"","s":"IMDb 7.9","m":"暂无"},{"y":"1961","t":"多情偏遇薄情郎","o":"Too Late Blues","x":"","s":"豆瓣 7.0","m":"103分钟"},{"y":"1962","t":"战斗","o":"Combat!","x":"","s":"IMDb 8.4","m":"暂无"},{"y":"1963","t":"危机时刻","o":"Breaking Point","x":"电视电影","s":"IMDb 7.1","m":"暂无"},{"y":"1963","t":"天下父母心","o":"A Child Is Waiting","x":"","s":"豆瓣 6.5","m":"102分钟"},{"y":"1964","t":"财色惊魂","o":"The Killers","x":"","s":"豆瓣 6.7","m":"93分钟"},{"y":"1967","t":"魔鬼天使","o":"Devil's Angels","x":"","s":"IMDb 5.0","m":"84分钟"},{"y":"1967","t":"十二金刚","o":"The Dirty Dozen","x":"","s":"豆瓣 7.3","m":"150分钟"},{"y":"1968","t":"面孔","o":"Faces","x":"","s":"豆瓣 8.1","m":"130分钟"},{"y":"1969","t":"铤而走险","o":"Gli intoccabili","x":"","s":"豆瓣 6.5","m":"96分钟"},{"y":"1969","t":"如果星期二，一定是在比利时","o":"If It's Tuesday, This Must Be Belgium","x":"","s":"IMDb 5.5","m":"105分钟"},{"y":"1970","t":"夫君","o":"Husbands","x":"","s":"豆瓣 7.7","m":"138分钟"},{"y":"1971","t":"明妮与莫斯科威兹","o":"Minnie and Moskowitz","x":"","s":"豆瓣 7.7","m":"114分钟"},{"y":"1972","t":"神探可伦坡 第二季","o":"Columbo Season 2","x":"","s":"豆瓣 8.7","m":"暂无"},{"y":"1974","t":"醉酒的女人","o":"A Woman Under the Influence","x":"","s":"豆瓣 8.3","m":"155分钟"},{"y":"1975","t":"卡彭","o":"Capone","x":"","s":"IMDb 5.7","m":"101分钟"},{"y":"1976","t":"麦基与尼基","o":"Mikey and Nicky","x":"","s":"豆瓣 7.9","m":"106分钟"},{"y":"1976","t":"谋杀地下老板","o":"The Killing of a Chinese Bookie","x":"","s":"豆瓣 7.8","m":"135分钟"},{"y":"1976","t":"两分钟警告","o":"Two Minute Warning","x":"","s":"豆瓣 7.4","m":"115分钟"},{"y":"1977","t":"乌龙英雄","o":"Heroes","x":"","s":"IMDb 5.9","m":"113分钟"},{"y":"1977","t":"首演之夜","o":"Opening Night","x":"","s":"豆瓣 8.3","m":"144分钟"},{"y":"1978","t":"目标大作战","o":"Brass Target","x":"","s":"IMDb 5.7","m":"111分钟"},{"y":"1978","t":"愤怒","o":"The Fury","x":"","s":"豆瓣 6.5","m":"118分钟"},{"y":"1980","t":"女煞葛洛莉","o":"Gloria","x":"","s":"豆瓣 7.5","m":"123分钟"},{"y":"1981","t":"这究竟是谁的生命","o":"Whose Life Is It Anyway","x":"","s":"IMDb 7.5","m":"119分钟"},{"y":"1982","t":"暴风雨","o":"Tempest","x":"","s":"IMDb 6.4","m":"140分钟"},{"y":"1982","t":"梦魇","o":"Incubus","x":"","s":"IMDb 5.5","m":"93分钟"},{"y":"1983","t":"马文和泰格","o":"Marvin & Tige","x":"","s":"暂无评分","m":"104分钟"},{"y":"1984","t":"爱的激流","o":"Love Streams","x":"","s":"豆瓣 8.2","m":"141分钟"},{"y":"1986","t":"小心眼大阴谋","o":"Big Trouble","x":"","s":"豆瓣 5.8","m":"93分钟"},{"y":"2000","t":"持续稳步的前进","o":"A Constant Forge","x":"纪录片","s":"豆瓣 8.6","m":"200分钟"}]},{"name":"大卫·里恩","en":"David Lean","country":"英国","count":"17 部","span":"1942–1985","note":"导演重制","remake":true,"theme":false,"films":[{"y":"1942","t":"与祖国同在","o":"In Which We Serve","x":"","s":"豆瓣 6.8","m":"115分钟"},{"y":"1944","t":"天伦之乐","o":"This Happy Breed","x":"","s":"豆瓣 7.3","m":"114分钟"},{"y":"1945","t":"相见恨晚","o":"Brief Encounter","x":"","s":"豆瓣 8.0","m":"86分钟"},{"y":"1945","t":"欢乐的精灵","o":"Blithe Spirit","x":"","s":"豆瓣 7.3","m":"96分钟"},{"y":"1946","t":"远大前程","o":"Great Expectations","x":"","s":"豆瓣 7.8","m":"118分钟"},{"y":"1948","t":"雾都孤儿","o":"Oliver Twist","x":"","s":"豆瓣 8.1","m":"116分钟"},{"y":"1949","t":"深情的朋友","o":"The Passionate Friends","x":"","s":"豆瓣 7.3","m":"95分钟"},{"y":"1950","t":"梅特林","o":"Madeleine","x":"","s":"豆瓣 7.3","m":"114分钟"},{"y":"1952","t":"一飞冲天","o":"The Sound Barrier","x":"","s":"豆瓣 7.1","m":"118分钟"},{"y":"1954","t":"女大不中留","o":"Hobson's Choice","x":"","s":"豆瓣 7.7","m":"107分钟"},{"y":"1955","t":"夏日时光","o":"Summertime","x":"","s":"豆瓣 7.5","m":"100分钟"},{"y":"1957","t":"桂河大桥","o":"The Bridge on the River Kwai","x":"","s":"豆瓣 8.4","m":"161分钟"},{"y":"1962","t":"阿拉伯的劳伦斯","o":"Lawrence of Arabia","x":"","s":"豆瓣 8.7","m":"216分钟"},{"y":"1965","t":"万世流芳","o":"The Greatest Story Ever Told","x":"","s":"豆瓣 7.6","m":"199分钟"},{"y":"1965","t":"日瓦戈医生","o":"Doctor Zhivago","x":"","s":"豆瓣 8.5","m":"197分钟"},{"y":"1970","t":"雷恩的女儿","o":"Ryan's Daughter","x":"","s":"豆瓣 8.2","m":"195分钟"},{"y":"1985","t":"印度之行","o":"A Passage to India","x":"","s":"豆瓣 8.0","m":"164分钟"}]},{"name":"马可·费雷里","en":"Marco Ferreri","country":"意大利","count":"30 部","span":"1958–1996","note":"","remake":false,"theme":false,"films":[{"y":"1958","t":"公寓","o":"El pisito","x":"","s":"IMDb 7.2","m":"87分钟"},{"y":"1959","t":"孩子们","o":"Los chicos","x":"","s":"IMDb 6.5","m":"90分钟"},{"y":"1960","t":"轮椅","o":"El Cochecito","x":"","s":"豆瓣 7.2","m":"85分钟"},{"y":"1961","t":"Le italiane e l'amore","o":"Le italiane e l'amore","x":"","s":"IMDb 5.4","m":"110分钟"},{"y":"1963","t":"女王蜂","o":"L'ape regina","x":"","s":"暂无评分","m":"90分钟"},{"y":"1964","t":"原始女人","o":"La Donna scimmia","x":"","s":"IMDb 7.3","m":"92分钟"},{"y":"1964","t":"异性相斥","o":"Controsesso","x":"","s":"IMDb 6.5","m":"90分钟"},{"y":"1965","t":"贩妻记","o":"Oggi, domani, dopodomani","x":"","s":"暂无评分","m":"95分钟"},{"y":"1965","t":"Marcia nuziale","o":"Marcia nuziale","x":"","s":"IMDb 6.7","m":"83分钟"},{"y":"1967","t":"玛格丽特的后宫","o":"L'harem","x":"","s":"IMDb 5.9","m":"100分钟"},{"y":"1968","t":"春光破碎","o":"L'Uomo dei cinque palloni","x":"","s":"IMDb 7.5","m":"85分钟"},{"y":"1969","t":"男人的种子","o":"Il Seme dell'uomo","x":"","s":"IMDb 6.6","m":"113分钟"},{"y":"1969","t":"迪林格尔之死","o":"Dillinger è morto","x":"","s":"豆瓣 7.2","m":"95分钟"},{"y":"1972","t":"丽莎","o":"Liza","x":"","s":"豆瓣 5.9","m":"100分钟"},{"y":"1973","t":"召见","o":"L'udienza","x":"","s":"暂无评分","m":"112分钟"},{"y":"1973","t":"极乐大餐","o":"La grande bouffe","x":"","s":"豆瓣 6.7","m":"130分钟"},{"y":"1974","t":"不要伤害白种女人","o":"Touche pas à la femme blanche","x":"","s":"豆瓣 6.1","m":"108分钟"},{"y":"1976","t":"最后的女人","o":"La dernière femme","x":"","s":"豆瓣 6.4","m":"112分钟"},{"y":"1978","t":"猴子再见","o":"Ciao maschio","x":"","s":"豆瓣 6.7","m":"113分钟"},{"y":"1979","t":"请求庇护","o":"Chiedo asilo","x":"","s":"IMDb 6.4","m":"110分钟"},{"y":"1981","t":"平凡人的疯狂","o":"Storie di ordinaria follia","x":"","s":"IMDb 6.9","m":"101分钟"},{"y":"1983","t":"庇亚娜的故事","o":"Storia di Piera","x":"","s":"豆瓣 6.3","m":"105分钟"},{"y":"1984","t":"女人是未来","o":"Il futuro è donna","x":"","s":"豆瓣 6.5","m":"99分钟"},{"y":"1986","t":"魔恋","o":"I Love You","x":"","s":"暂无评分","m":"101分钟"},{"y":"1988","t":"Ya bon les blancs","o":"Ya bon les blancs","x":"","s":"IMDb 6.1","m":"98分钟"},{"y":"1989","t":"会饮","o":"Le Banquet","x":"","s":"豆瓣 7.7","m":"76分钟"},{"y":"1991","t":"微笑之屋","o":"La casa del sorriso","x":"","s":"豆瓣 6.5","m":"110分钟"},{"y":"1991","t":"肉欲乐园","o":"La Carne","x":"","s":"豆瓣 5.5","m":"90分钟"},{"y":"1993","t":"疯人日记","o":"Diario di un vizio","x":"","s":"IMDb 6.2","m":"94分钟"},{"y":"1996","t":"银硝","o":"Nitrato d'argento","x":"","s":"IMDb 5.9","m":"87分钟"}]},{"name":"米哈利斯·卡科伊亚尼斯","en":"Mihalis Kakogiannis","country":"希腊","count":"15 部","span":"1954–1999","note":"多数条目标注豆瓣无评分","remake":false,"theme":false,"films":[{"y":"1954","t":"意外之财","o":"","x":"豆瓣无评分","s":"暂无评分","m":"95分钟"},{"y":"1955","t":"斯特拉","o":"Στέλλα","x":"","s":"IMDb 7.9","m":"90分钟"},{"y":"1956","t":"黑衣姑娘","o":"","x":"豆瓣无评分","s":"IMDb 7.7","m":"100分钟"},{"y":"1957","t":"尊严问题","o":"A Matter of Dignity","x":"豆瓣无评分","s":"IMDb 7.7","m":"112分钟"},{"y":"1960","t":"英雄交响曲","o":"Eroica","x":"豆瓣无评分","s":"暂无评分","m":"117分钟"},{"y":"1961","t":"浪荡子","o":"Il relitto","x":"","s":"IMDb 7.1","m":"84分钟"},{"y":"1962","t":"厄勒克特拉","o":"Ηλέκτρα","x":"","s":"豆瓣 8.0","m":"110分钟"},{"y":"1964","t":"希腊人佐巴","o":"Zorba the Greek","x":"","s":"豆瓣 7.9","m":"142分钟"},{"y":"1967","t":"鱼死之日","o":"The Day the Fish Came Out","x":"","s":"暂无评分","m":"109分钟"},{"y":"1971","t":"特洛伊妇女","o":"The Trojan Women","x":"豆瓣无评分","s":"IMDb 6.9","m":"105分钟"},{"y":"1975","t":"泣血家园","o":"","x":"豆瓣无评分","s":"IMDb 6.6","m":"103分钟"},{"y":"1977","t":"伊菲吉妮娅","o":"Iφιγένεια","x":"","s":"豆瓣 8.3","m":"127分钟"},{"y":"1987","t":"甜蜜的家","o":"Sweet Country","x":"","s":"暂无评分","m":"150分钟"},{"y":"1993","t":"向上，向下，侧移","o":"Pano, Kato kai Plagios","x":"豆瓣无评分","s":"IMDb 5.3","m":"108分钟"},{"y":"1999","t":"樱桃园","o":"The Cherry Orchard","x":"豆瓣 8.1","s":"豆瓣 8.1","m":"141分钟"}]},{"name":"阿兰·卡瓦利埃","en":"Alain Cavalier","country":"法国","count":"25 部","span":"1958–2018","note":"","remake":false,"theme":false,"films":[{"y":"1958","t":"一个美国人","o":"Un Américain","x":"","s":"IMDb 6.3","m":"暂无"},{"y":"1962","t":"小岛上的决斗","o":"Le Combat dans l'île","x":"","s":"豆瓣 6.6","m":"104分钟"},{"y":"1964","t":"喋血凌霄阁","o":"L'Insoumis","x":"","s":"IMDb 7.2","m":"115分钟"},{"y":"1967","t":"十二金刚洗劫工业城","o":"Mise à sac","x":"","s":"IMDb 6.8","m":"98分钟"},{"y":"1968","t":"狂乱","o":"La chamade","x":"","s":"豆瓣 7.2","m":"103分钟"},{"y":"1976","t":"加满高级汽油","o":"Le plein de super","x":"","s":"豆瓣 6.7","m":"97分钟"},{"y":"1979","t":"无法留言的留声机","o":"Ce répondeur ne prend pas de messages","x":"","s":"IMDb 7.4","m":"64分钟"},{"y":"1979","t":"马丁与蕾雅","o":"Martin et Léa","x":"","s":"IMDb 6.5","m":"92分钟"},{"y":"1981","t":"奇异的旅行","o":"Un étrange voyage","x":"","s":"IMDb 6.9","m":"100分钟"},{"y":"1982","t":"Lettre d'Alain Cavalier","o":"Lettre d'Alain Cavalier","x":"","s":"暂无评分","m":"暂无"},{"y":"1986","t":"圣女泰蕾丝","o":"Thérèse","x":"","s":"豆瓣 7.7","m":"94分钟"},{"y":"1990","t":"L'Illusionniste","o":"L'Illusionniste","x":"","s":"暂无评分","m":"暂无"},{"y":"1993","t":"沉默的反抗","o":"Libera me","x":"","s":"暂无评分","m":"78分钟"},{"y":"1996","t":"相遇","o":"La rencontre","x":"","s":"暂无评分","m":"暂无"},{"y":"1997","t":"Georges de la Tour","o":"Georges de la Tour","x":"","s":"暂无评分","m":"暂无"},{"y":"2002","t":"重生","o":"René","x":"","s":"IMDb 6.7","m":"85分钟"},{"y":"2005","t":"电影制片人","o":"Le filmeur","x":"纪录片","s":"IMDb 6.7","m":"97分钟"},{"y":"2009","t":"睹物念妻","o":"Irène","x":"","s":"IMDb 6.7","m":"83分钟"},{"y":"2011","t":"面对死亡","o":"Faire la mort","x":"","s":"暂无评分","m":"暂无"},{"y":"2011","t":"佩特","o":"Pater","x":"","s":"IMDb 6.4","m":"105分钟"},{"y":"2011","t":"Elle, seule","o":"Elle, seule","x":"","s":"暂无评分","m":"暂无"},{"y":"2014","t":"天堂","o":"Le Paradis","x":"","s":"IMDb 6.4","m":"70分钟"},{"y":"2018","t":"六幅巨型肖像3：菲利普与贝尔纳","o":"Six portraits XL 3 Philippe et Bernard","x":"","s":"暂无评分","m":"暂无"},{"y":"2018","t":"六幅巨型肖像1：莱昂与吉约姆","o":"Six portraits XL 1 Léon et Guillaume","x":"","s":"暂无评分","m":"暂无"},{"y":"2018","t":"六幅巨型肖像2：雅科特与丹尼尔","o":"Six portraits XL 2 Jacquotte et Daniel","x":"","s":"暂无评分","m":"暂无"}]},{"name":"沃依切赫·马尔切夫斯基","en":"Wojciech Marczewski","country":"波兰","count":"9 部","span":"1969–2001","note":"","remake":false,"theme":false,"films":[{"y":"1969","t":"寻常旅人","o":"Podróżni jak inni","x":"","s":"暂无评分","m":"暂无"},{"y":"1972","t":"离开，回归","o":"Odejścia, powroty","x":"","s":"暂无评分","m":"暂无"},{"y":"1974","t":"复活节","o":"Wielkanoc","x":"","s":"暂无评分","m":"36分钟"},{"y":"1979","t":"恶梦","o":"Zmory","x":"","s":"豆瓣 7.1","m":"100分钟"},{"y":"1980","t":"管家","o":"Klucznik","x":"","s":"暂无评分","m":"80分钟"},{"y":"1981","t":"毛骨悚然","o":"Dreszcze","x":"","s":"豆瓣 7.3","m":"106分钟"},{"y":"1990","t":"逃离“自由”电影院","o":"Ucieczka z kina 'Wolność'","x":"","s":"豆瓣 7.4","m":"88分钟"},{"y":"1997","t":"背叛之时","o":"Czas zdrady","x":"","s":"IMDb 5.4","m":"63分钟"},{"y":"2001","t":"韦泽","o":"Weiser","x":"","s":"IMDb 6.0","m":"95分钟"}]},{"name":"奥图罗·利普斯坦","en":"Arturo Ripstein","country":"墨西哥","count":"32 部","span":"1966–2019","note":"","remake":false,"theme":false,"films":[{"y":"1966","t":"大限难逃","o":"Tiempo de morir","x":"","s":"豆瓣 7.3","m":"90分钟"},{"y":"1967","t":"危险游戏","o":"Juego peligroso","x":"","s":"IMDb 6.2","m":"94分钟"},{"y":"1969","t":"未来的回忆","o":"Memories of the Future","x":"","s":"暂无评分","m":"暂无"},{"y":"1969","t":"The Children's Hour","o":"The Children's Hour","x":"","s":"暂无评分","m":"暂无"},{"y":"1971","t":"普罗维登西亚街上的流浪汉","o":"Náufrago de la Calle Providencia","x":"","s":"暂无评分","m":"暂无"},{"y":"1973","t":"贞洁堡垒","o":"El castillo de la pureza","x":"","s":"IMDb 7.4","m":"110分钟"},{"y":"1974","t":"圣公会","o":"El santo oficio","x":"","s":"IMDb 7.1","m":"127分钟"},{"y":"1976","t":"狐步舞","o":"Foxtrot","x":"","s":"暂无评分","m":"暂无"},{"y":"1977","t":"黑寡妇","o":"The Black Widow","x":"","s":"IMDb 7.0","m":"78分钟"},{"y":"1977","t":"黑暗宫殿","o":"Lecumberri","x":"","s":"IMDb 5.2","m":"暂无"},{"y":"1978","t":"无垠之地","o":"El lugar sin límites","x":"","s":"豆瓣 7.7","m":"110分钟"},{"y":"1979","t":"亚历杭德拉阿姨","o":"La tía Alejandra","x":"","s":"IMDb 7.5","m":"98分钟"},{"y":"1979","t":"非法","o":"La ilegal","x":"","s":"暂无评分","m":"暂无"},{"y":"1979","t":"无期徒刑","o":"Cadena perpetua","x":"","s":"IMDb 7.8","m":"95分钟"},{"y":"1980","t":"诱惑","o":"La seducción","x":"","s":"暂无评分","m":"暂无"},{"y":"1981","t":"死亡之路","o":"Rastro de muerte","x":"","s":"IMDb 5.3","m":"暂无"},{"y":"1986","t":"富贵不留人","o":"El imperio de la fortuna","x":"","s":"豆瓣 7.3","m":"130分钟"},{"y":"1987","t":"虔诚的谎言","o":"Mentiras piadosas","x":"","s":"暂无评分","m":"暂无"},{"y":"1988","t":"甜蜜的挑战","o":"Dulce desafío","x":"","s":"暂无评分","m":"暂无"},{"y":"1991","t":"码头神女","o":"La mujer del puerto","x":"","s":"IMDb 7.2","m":"110分钟"},{"y":"1994","t":"始与终","o":"Principio y fin","x":"","s":"暂无评分","m":"暂无"},{"y":"1994","t":"不夜天皇后","o":"La reina de la noche","x":"","s":"IMDb 7.1","m":"117分钟"},{"y":"1996","t":"深深的腥红","o":"Profundo carmesí","x":"","s":"豆瓣 8.0","m":"114分钟"},{"y":"1998","t":"奇迹福音","o":"El Evangelio de las Maravillas","x":"","s":"IMDb 7.2","m":"112分钟"},{"y":"1999","t":"没人写信给上校","o":"El Coronel no tiene quien le escriba","x":"","s":"豆瓣 7.5","m":"118分钟"},{"y":"2000","t":"男人的毁灭","o":"La perdición de los hombres","x":"","s":"豆瓣 6.5","m":"92分钟"},{"y":"2000","t":"恨他入骨","o":"Así es la vida","x":"","s":"豆瓣 6.1","m":"98分钟"},{"y":"2002","t":"欲望处女","o":"La virgen de la lujuria","x":"","s":"豆瓣 5.8","m":"151分钟"},{"y":"2009","t":"所多玛狂欢节","o":"El carnaval de Sodoma","x":"","s":"暂无评分","m":"暂无"},{"y":"2011","t":"内心的原因","o":"Las razones del corazón","x":"","s":"IMDb 6.6","m":"120分钟"},{"y":"2015","t":"无望街头","o":"La calle de la amargura","x":"","s":"豆瓣 6.6","m":"99分钟"},{"y":"2019","t":"两腿之间的魔鬼","o":"El Diablo entre las Piernas","x":"","s":"暂无评分","m":"暂无"}]},{"name":"团鬼六","en":"Oniroku Dan","country":"日本","count":"10 部","span":"1974–2014","note":"SM 小说家·绳缚题材改编电影","remake":false,"theme":false,"films":[{"y":"1974","t":"花与蛇","o":"花と蛇","x":"","s":"IMDb 5.5","m":"74分钟"},{"y":"1981","t":"女教师","o":"","x":"","s":"暂无评分","m":"暂无"},{"y":"1983","t":"美女绳地狱","o":"","x":"","s":"豆瓣 7.0","m":"77分钟"},{"y":"1984","t":"团鬼六：绳责","o":"団鬼六 繩責め","x":"","s":"豆瓣 6.7","m":"暂无"},{"y":"1984","t":"团鬼六：修道女绳地狱","o":"団鬼六 修道女縄地獄","x":"","s":"豆瓣 6.3","m":"暂无"},{"y":"1985","t":"团鬼六：美教师地狱责罚","o":"団鬼六 美教師地獄責め","x":"","s":"IMDb 5.3","m":"暂无"},{"y":"2004","t":"花与蛇","o":"花と蛇","x":"","s":"IMDb 5.5","m":"115分钟"},{"y":"2005","t":"花与蛇2：巴黎静子","o":"花と蛇2 パリ静子","x":"","s":"IMDb 5.5","m":"113分钟"},{"y":"2010","t":"花与蛇3","o":"花と蛇3","x":"","s":"IMDb 4.6","m":"106分钟"},{"y":"2014","t":"花与蛇：零","o":"花と蛇 ZERO","x":"","s":"IMDb 4.7","m":"113分钟"}]},{"name":"90分钟以内的佳作片单合集","en":"主题 · 短时长佳作","country":"主题合集","count":"25 部","span":"1990–2024","note":"","remake":false,"theme":true,"films":[{"y":"1990","t":"理发师的情人","o":"Le mari de la coiffeuse","x":"","s":"IMDb 7.1","m":"82分钟"},{"y":"1992","t":"杀手悲歌","o":"El Mariachi","x":"","s":"豆瓣 7.4","m":"81分钟"},{"y":"1993","t":"芳芳","o":"Fanfan","x":"","s":"豆瓣 8.1","m":"87分钟"},{"y":"1995","t":"白气球","o":"بادکنک سفيد","x":"","s":"豆瓣 8.1","m":"85分钟"},{"y":"1996","t":"梦旅人","o":"PicNic","x":"","s":"豆瓣 8.3","m":"68分钟"},{"y":"1997","t":"秘密花园","o":"ひみつの花園","x":"","s":"豆瓣 8.5","m":"85分钟"},{"y":"1998","t":"同窗的爱","o":"Fucking Åmål","x":"","s":"豆瓣 7.7","m":"89分钟"},{"y":"1998","t":"四月物语","o":"四月物語","x":"","s":"豆瓣 8.3","m":"67分钟"},{"y":"1999","t":"相约星期二","o":"Tuesdays with Morrie","x":"豆瓣 8.8","s":"豆瓣 8.5","m":"89分钟"},{"y":"2003","t":"大象","o":"Elephant","x":"","s":"豆瓣 7.9","m":"81分钟"},{"y":"2004","t":"迷幻公园","o":"Paranoid Park","x":"","s":"豆瓣 7.3","m":"85分钟"},{"y":"2005","t":"时光驻留","o":"Time to Leave","x":"","s":"豆瓣 8.0","m":"81分钟"},{"y":"2005","t":"鱿鱼和鲸","o":"The Squid and the Whale","x":"","s":"豆瓣 7.7","m":"81分钟"},{"y":"2008","t":"与安娜的四个夜晚","o":"Cztery noce z Anną","x":"","s":"豆瓣 7.6","m":"87分钟"},{"y":"2010","t":"无用的人","o":"やくたたず","x":"","s":"豆瓣 7.4","m":"76分钟"},{"y":"2011","t":"杀戮","o":"Carnage","x":"","s":"豆瓣 8.2","m":"80分钟"},{"y":"2011","t":"单车少年","o":"Le gamin au vélo","x":"","s":"豆瓣 8.2","m":"87分钟"},{"y":"2012","t":"凯撒必须死","o":"Cesare deve morire","x":"","s":"豆瓣 7.8","m":"76分钟"},{"y":"2013","t":"虔诚的鳏夫","o":"Matterhorn","x":"","s":"豆瓣 7.7","m":"87分钟"},{"y":"2017","t":"酒会","o":"The Party","x":"","s":"豆瓣 7.3","m":"71分钟"},{"y":"2018","t":"野性之旅","o":"ワイルドツアー","x":"","s":"IMDb 5.5","m":"67分钟"},{"y":"2018","t":"草叶集","o":"풀잎들","x":"","s":"豆瓣 6.8","m":"66分钟"},{"y":"2021","t":"有答案的男子","o":"The Man with the Answers","x":"","s":"豆瓣 7.9","m":"80分钟"},{"y":"2021","t":"小妈妈","o":"Petite maman","x":"","s":"豆瓣 8.1","m":"72分钟"},{"y":"2024","t":"破碎的愤怒","o":"Broken Rage","x":"","s":"豆瓣 6.3","m":"62分钟"}]},{"name":"恐怖片","en":"主题 · 恐怖/惊悚","country":"主题合集","count":"25 部","span":"1942–1995","note":"","remake":false,"theme":true,"films":[{"y":1942,"t":"豹族","o":"Cat People","x":"","s":"豆瓣 7.4","m":"73分钟"},{"y":1963,"t":"黑色安息日","o":"Black Sabbath","x":"","s":"豆瓣 7.0","m":"92分钟"},{"y":1977,"t":"鬼怪屋","o":"HOUSE ハウス","x":"","s":"豆瓣 7.5","m":"88分钟"},{"y":1995,"t":"夜瘾","o":"The Addiction","x":"","s":"豆瓣 7.3","m":"82分钟"},{"y":1981,"t":"毛骨悚然","o":"","x":"","s":"IMDb 6.6","m":"130分钟"},{"y":1973,"t":"威尼斯疑魂","o":"","x":"","s":"豆瓣 7.2","m":"110分钟"},{"y":1969,"t":"焚尸人","o":"","x":"","s":"豆瓣 8.2","m":"95分钟"},{"y":1980,"t":"夜雾杀机","o":"","x":"","s":"豆瓣 6.5","m":"89分钟"},{"y":1943,"t":"与僵尸同行","o":"","x":"","s":"豆瓣 7.1","m":"69分钟"},{"y":1977,"t":"狂犬病","o":"","x":"","s":"豆瓣 6.3","m":"91分钟"},{"y":1957,"t":"恶魔之夜","o":"","x":"","s":"豆瓣 7.3","m":"95分钟"},{"y":1987,"t":"恐怖歌剧","o":"","x":"","s":"豆瓣 7.0","m":"107分钟"},{"y":1985,"t":"神话","o":"","x":"","s":"暂无评分","m":"暂无"},{"y":1972,"t":"喋血七兰花","o":"","x":"","s":"暂无评分","m":"95分钟"},{"y":1964,"t":"血与黑蕾丝","o":"","x":"","s":"豆瓣 7.1","m":"89分钟"},{"y":1941,"t":"化身博士","o":"","x":"","s":"豆瓣 8.1","m":"113分钟"},{"y":1983,"t":"死亡地带","o":"","x":"","s":"豆瓣 6.7","m":"103分钟"},{"y":1961,"t":"无辜的人","o":"","x":"","s":"豆瓣 7.8","m":"99分钟"},{"y":1988,"t":"天魔回魂","o":"","x":"","s":"豆瓣 6.7","m":"102分钟"},{"y":1958,"t":"恐怖德古拉","o":"","x":"","s":"豆瓣 6.8","m":"82分钟"},{"y":1978,"t":"月光光心慌慌","o":"","x":"","s":"豆瓣 6.8","m":"91分钟"},{"y":1982,"t":"黑暗","o":"","x":"","s":"暂无评分","m":"暂无"},{"y":1963,"t":"邪屋","o":"","x":"","s":"豆瓣 7.0","m":"112分钟"},{"y":1960,"t":"撒旦的面具","o":"","x":"","s":"豆瓣 7.1","m":"87分钟"}]},{"name":"三船敏郎","en":"Toshiro Mifune","country":"日本","count":"13 部","span":"1943–1967","note":"日本国民演员 · 含 4 部稀有收藏","remake":false,"theme":false,"films":[{"y":"1943","t":"无法松的一生","o":"無法松の一生","x":"","s":"豆瓣 7.7","m":"99分钟"},{"y":"1950","t":"婚约指环","o":"婚約指環","x":"","s":"豆瓣 7.6","m":"96分钟"},{"y":"1950","t":"石中先生行Z记","o":"Conduct Report on Professor Ishinaka","x":"","s":"豆瓣 8.0","m":"98分钟"},{"y":"1951","t":"战后派妖怪大会","o":"戦後派お化け大会","x":"稀有收藏","s":"暂无评分","m":"暂无"},{"y":"1952","t":"西鹤一代女","o":"西鶴一代女","x":"","s":"豆瓣 8.3","m":"148分钟"},{"y":"1952","t":"雾笛","o":"霧笛","x":"稀有收藏","s":"IMDb 8.0","m":"100分钟"},{"y":"1953","t":"抱拥","o":"抱擁","x":"稀有收藏","s":"暂无评分","m":"暂无"},{"y":"1955","t":"宫本武藏续 一乘寺之决斗","o":"続宮本武蔵 一乗寺の決闘","x":"","s":"豆瓣 7.4","m":"104分钟"},{"y":"1956","t":"宫本武藏 完结篇 决斗岩流岛","o":"宮本武蔵 完結篇 決闘巌流島","x":"","s":"豆瓣 7.6","m":"105分钟"},{"y":"1956","t":"妻之心","o":"妻の心","x":"","s":"豆瓣 7.9","m":"101分钟"},{"y":"1956","t":"爱情的决算","o":"愛情の決算","x":"稀有收藏","s":"暂无评分","m":"暂无"},{"y":"1967","t":"夺命剑","o":"Samurai Rebellion","x":"","s":"豆瓣 9.0","m":"128分钟"},{"y":"1967","t":"日本最长的一天","o":"日本のいちばん長い日","x":"","s":"豆瓣 8.1","m":"157分钟"}]}],"YT":[{"name":"大卫·芬奇","country":"美国","kind":"series","note":"悬念大师的类型变奏","films":[{"y":"2002","t":"战栗空间","o":"Panic Room","r":"美国","d":"2000年代","g":"惊悚/犯罪","n":"大卫·芬奇","s":"豆瓣 7.2","m":"112分钟"},{"y":"2011","t":"龙纹身的女孩","o":"The Girl with the Dragon Tattoo","r":"美国/瑞典","d":"2010年代","g":"剧情/犯罪","n":"大卫·芬奇·千禧年三部曲","s":"豆瓣 8.1","m":"158分钟"},{"y":"2020","t":"曼克","o":"Mank","r":"美国","d":"2020年代","g":"剧情/传记","n":"大卫·芬奇·奥逊·威尔斯编剧","s":"豆瓣 7.3","m":"131分钟"}]},{"name":"李沧东","country":"韩国","kind":"series","note":"韩国文艺片高峰","films":[{"y":"1999","t":"薄荷糖","o":"Peppermint Candy","r":"韩国","d":"1990年代","g":"剧情","n":"李沧东·倒叙人生","s":"豆瓣 8.6","m":"130分钟"},{"y":"2002","t":"绿洲","o":"Oasis","r":"韩国","d":"2000年代","g":"爱情/剧情","n":"李沧东·威尼斯最佳导演","s":"豆瓣 8.6","m":"132分钟"},{"y":"2007","t":"密阳","o":"Secret Sunshine","r":"韩国","d":"2000年代","g":"剧情","n":"李沧东·全度妍戛纳影后","s":"豆瓣 8.0","m":"142分钟"},{"y":"2010","t":"诗","o":"Poetry","r":"韩国","d":"2010年代","g":"剧情","n":"李沧东·戛纳最佳编剧","s":"豆瓣 8.7","m":"139分钟"}]},{"name":"阿普三部曲","country":"印度·雷伊","kind":"series","note":"影史最伟大成长三部曲","films":[{"y":"1955","t":"大地之歌","o":"Pather Panchali","r":"印度","d":"1950年代","g":"剧情","n":"雷伊·阿普三部曲之一","s":"豆瓣 8.9","m":"125分钟"},{"y":"1956","t":"大河之歌","o":"Aparajito","r":"印度","d":"1950年代","g":"剧情","n":"雷伊·阿普三部曲之二","s":"豆瓣 8.7","m":"110分钟"},{"y":"1959","t":"大树之歌","o":"Apur Sansar","r":"印度","d":"1950年代","g":"剧情","n":"雷伊·阿普三部曲之三","s":"豆瓣 8.6","m":"105分钟"}]},{"name":"意大利新现实主义","country":"意大利","kind":"history","note":"罗西里尼与德·桑蒂斯","films":[{"y":"1945","t":"罗马，不设防的城市","o":"Roma, città aperta","r":"意大利","d":"1940年代","g":"剧情/战争","n":"罗西里尼·新现实主义开山","s":"豆瓣 8.1","m":"103分钟"},{"y":"1952","t":"罗马11时","o":"Roma ore 11","r":"意大利/法国","d":"1950年代","g":"剧情","n":"德·桑蒂斯·新现实主义","s":"豆瓣 9.2","m":"107分钟"}]},{"name":"维斯康蒂","country":"意大利","kind":"series","note":"贵族视角的意大利史诗","films":[{"y":"1960","t":"洛可兄弟","o":"Rocco e i suoi fratelli","r":"法国/意大利","d":"1960年代","g":"剧情","n":"维斯康蒂·阿兰·德龙","s":"豆瓣 8.3","m":"179分钟"},{"y":"1971","t":"魂断威尼斯","o":"Death in Venice","r":"意大利","d":"1970年代","g":"剧情","n":"维斯康蒂·马勒配乐","s":"豆瓣 8.1","m":"130分钟"}]},{"name":"马丁·斯科塞斯","country":"美国","kind":"series","note":"暴力与信仰的一体两面","films":[{"y":"2002","t":"纽约黑帮","o":"Gangs of New York","r":"美国","d":"2000年代","g":"犯罪/历史","n":"斯科塞斯·小李子","s":"豆瓣 7.6","m":"167分钟"},{"y":"2016","t":"沉默","o":"Silence","r":"美国","d":"2010年代","g":"历史/剧情","n":"斯科塞斯·远藤周作","s":"豆瓣 7.7","m":"161分钟"}]},{"name":"齐泽克论说纪录","country":"英国","kind":"theme","note":"精神分析解构电影","films":[{"y":"2006","t":"变态者电影指南","o":"The Pervert's Guide to Cinema","r":"英国","d":"2000年代","g":"纪录片/论说","n":"齐泽克谈电影","s":"豆瓣 8.7","m":"150分钟"},{"y":"2012","t":"变态者意识形态指南","o":"The Pervert's Guide to Ideology","r":"英国","d":"2010年代","g":"纪录片/论说","n":"齐泽克","s":"豆瓣 9.1","m":"136分钟"}]},{"name":"国家剧院现场 NTL","country":"英国","kind":"history","note":"高清舞台戏剧","films":[{"y":"2015","t":"凡人与超人","o":"Man and Superman (NTL)","r":"英国","d":"2010年代","g":"舞台/戏剧","n":"萧伯纳·国家剧院现场","s":"豆瓣 9.2","m":"220分钟"},{"y":"2018","t":"安东尼和克莉奥佩特拉","o":"Antony & Cleopatra (NTL)","r":"英国","d":"2010年代","g":"舞台/戏剧","n":"莎士比亚·国家剧院现场","s":"豆瓣 7.4","m":"229分钟"}]},{"name":"戛纳金棕榈","country":"多国","kind":"history","note":"片单再添三座金棕榈","films":[{"y":"1953","t":"恐惧的代价","o":"Le salaire de la peur","r":"法国","d":"1950年代","g":"惊悚/冒险","n":"克鲁佐·戛纳金棕榈","s":"豆瓣 8.6","m":"131分钟"},{"y":"1957","t":"雁南飞","o":"Летят журавли","r":"苏联","d":"1950年代","g":"剧情/爱情","n":"卡拉托佐夫·戛纳金棕榈","s":"豆瓣 8.8","m":"95分钟"},{"y":"1979","t":"铁皮鼓","o":"Die Blechtrommel","r":"西德/波兰/法国","d":"1970年代","g":"剧情/历史","n":"施隆多夫·戛纳金棕榈","s":"豆瓣 8.3","m":"142分钟"}]},{"name":"黑色 / 新黑色电影","country":"美国等","kind":"theme","note":"类型母题","films":[{"y":"1955","t":"大爵士乐队","o":"The Big Combo","r":"美国","d":"1950年代","g":"犯罪/黑色","n":"黑色电影经典","s":"豆瓣 7.4","m":"84分钟"},{"y":"1967","t":"邦妮与克莱德","o":"Bonnie and Clyde","r":"美国","d":"1960年代","g":"犯罪/传记","n":"新好莱坞开山之作","s":"豆瓣 8.2","m":"111分钟"},{"y":"1981","t":"体热","o":"Body Heat","r":"美国","d":"1980年代","g":"惊悚/犯罪","n":"新黑色电影","s":"豆瓣 7.6","m":"113分钟"},{"y":"1998","t":"死亡密码π","o":"Pi","r":"美国","d":"1990年代","g":"科幻/惊悚","n":"阿罗诺夫斯基处女作","s":"","m":"84分钟"},{"y":"2002","t":"蛇蝎美人","o":"Femme Fatale","r":"法国","d":"2000年代","g":"惊悚/犯罪","n":"布莱恩·德·帕尔玛作品","s":"豆瓣 7.0","m":"114分钟"}]},{"name":"战争与人","country":"多国","kind":"theme","note":"战争与人性母题","films":[{"y":"1939","t":"乱世佳人","o":"Gone with the Wind","r":"美国","d":"1930年代","g":"爱情/战争","n":"影史经典","s":"豆瓣 9.3","m":"233分钟"},{"y":"1942","t":"你逃我也逃","o":"To Be or Not to Be","r":"美国","d":"1940年代","g":"喜剧/战争","n":"刘别谦经典","s":"豆瓣 9.3","m":"99分钟"},{"y":"1965","t":"大街上的商店","o":"Obchod na korze","r":"捷克斯洛伐克","d":"1960年代","g":"剧情/战争","n":"奥斯卡最佳外语片","s":"豆瓣 7.9","m":"125分钟"},{"y":"2001","t":"无主之地","o":"Ničija zemlja","r":"波黑","d":"2000年代","g":"剧情/战争","n":"奥斯卡最佳外语片","s":"豆瓣 8.6","m":"93分钟"},{"y":"2004","t":"沉静如海","o":"Le silence de la mer","r":"法国","d":"2000年代","g":"爱情/战争","n":"二战德军军官与法国少女","s":"豆瓣 9.1","m":"93分钟"}]}],"YALL":[{"y":"1928","t":"圣女贞德蒙难记","o":"La Passion de Jeanne d'Arc","r":"法国","d":"1920年代","g":"历史/剧情","n":"德莱叶默片经典","s":"豆瓣 8.7","m":"82分钟"},{"y":"1929","t":"持摄影机的人","o":"Человек с Киноаппаратом","r":"苏联","d":"1920年代","g":"纪录片/实验","n":"维尔托夫·蒙太奇经典","s":"豆瓣 9.1","m":"68分钟"},{"y":"1939","t":"乱世佳人","o":"Gone with the Wind","r":"美国","d":"1930年代","g":"爱情/战争","n":"影史经典","s":"豆瓣 9.3","m":"233分钟"},{"y":"1942","t":"你逃我也逃","o":"To Be or Not to Be","r":"美国","d":"1940年代","g":"喜剧/战争","n":"刘别谦经典","s":"豆瓣 9.3","m":"99分钟"},{"y":"1945","t":"罗马，不设防的城市","o":"Roma, città aperta","r":"意大利","d":"1940年代","g":"剧情/战争","n":"罗西里尼·新现实主义开山","s":"豆瓣 8.1","m":"103分钟"},{"y":"1948","t":"红菱艳","o":"The Red Shoes","r":"英国","d":"1940年代","g":"歌舞/爱情","n":"经典芭蕾题材","s":"豆瓣 8.2","m":"135分钟"},{"y":"1952","t":"罗马11时","o":"Roma ore 11","r":"意大利/法国","d":"1950年代","g":"剧情","n":"德·桑蒂斯·新现实主义","s":"豆瓣 9.2","m":"107分钟"},{"y":"1953","t":"恐惧的代价","o":"Le salaire de la peur","r":"法国","d":"1950年代","g":"惊悚/冒险","n":"克鲁佐·戛纳金棕榈","s":"豆瓣 8.6","m":"131分钟"},{"y":"1955","t":"大爵士乐队","o":"The Big Combo","r":"美国","d":"1950年代","g":"犯罪/黑色","n":"黑色电影经典","s":"豆瓣 7.4","m":"84分钟"},{"y":"1955","t":"大地之歌","o":"Pather Panchali","r":"印度","d":"1950年代","g":"剧情","n":"雷伊·阿普三部曲之一","s":"豆瓣 8.9","m":"125分钟"},{"y":"1956","t":"大河之歌","o":"Aparajito","r":"印度","d":"1950年代","g":"剧情","n":"雷伊·阿普三部曲之二","s":"豆瓣 8.7","m":"110分钟"},{"y":"1957","t":"雁南飞","o":"Летят журавли","r":"苏联","d":"1950年代","g":"剧情/爱情","n":"卡拉托佐夫·戛纳金棕榈","s":"豆瓣 8.8","m":"95分钟"},{"y":"1959","t":"桥上的人","o":"Люди на мосту","r":"苏联","d":"1950年代","g":"剧情","n":"苏联老片·俄语中字","s":"IMDb 6.8","m":"101分钟"},{"y":"1959","t":"大树之歌","o":"Apur Sansar","r":"印度","d":"1950年代","g":"剧情","n":"雷伊·阿普三部曲之三","s":"豆瓣 8.6","m":"105分钟"},{"y":"1960","t":"洛可兄弟","o":"Rocco e i suoi fratelli","r":"法国/意大利","d":"1960年代","g":"剧情","n":"维斯康蒂·阿兰·德龙","s":"豆瓣 8.3","m":"179分钟"},{"y":"1962","t":"审判","o":"Le procès","r":"法国","d":"1960年代","g":"剧情/悬疑","n":"奥逊·威尔斯·卡夫卡","s":"豆瓣 8.5","m":"118分钟"},{"y":"1962","t":"阿尔卡特兹的养鸟人","o":"Birdman of Alcatraz","r":"美国","d":"1960年代","g":"剧情/传记","n":"伯特·兰卡斯特","s":"豆瓣 8.6","m":"148分钟"},{"y":"1964","t":"砂之女","o":"Suna no Onna","r":"日本","d":"1960年代","g":"剧情/悬疑","n":"敕使河原宏·安部公房原著","s":"豆瓣 8.6","m":"147分钟"},{"y":"1964","t":"哈姆雷特","o":"Гамлет","r":"苏联","d":"1960年代","g":"剧情","n":"柯静采夫·莎士比亚","s":"豆瓣 8.6","m":"140分钟"},{"y":"1965","t":"大街上的商店","o":"Obchod na korze","r":"捷克斯洛伐克","d":"1960年代","g":"剧情/战争","n":"奥斯卡最佳外语片","s":"豆瓣 7.9","m":"125分钟"},{"y":"1965","t":"萨拉戈萨手稿","o":"Rekopis znaleziony w Saragossie","r":"波兰","d":"1960年代","g":"奇幻/冒险","n":"波兰传奇叙事","s":"豆瓣 8.3","m":"182分钟"},{"y":"1966","t":"落叶","o":"（待确认）","r":"日本","d":"1960年代","g":"剧情","n":"日本老片·信息待确认","s":"豆瓣 7.1","m":"91分钟"},{"y":"1967","t":"邦妮与克莱德","o":"Bonnie and Clyde","r":"美国","d":"1960年代","g":"犯罪/传记","n":"新好莱坞开山之作","s":"豆瓣 8.2","m":"111分钟"},{"y":"1969","t":"一切善良的市民们","o":"Všichni dobří rodáci","r":"捷克斯洛伐克","d":"1960年代","g":"剧情/战争","n":"雅斯尼·戛纳最佳导演","s":"豆瓣 7.6","m":"115分钟"},{"y":"1970","t":"瓦莱莉和她的奇迹一周","o":"Valerie a týden divů","r":"捷克斯洛伐克","d":"1970年代","g":"奇幻/超现实","n":"捷克新浪潮","s":"豆瓣 7.7","m":"77分钟"},{"y":"1971","t":"魂断威尼斯","o":"Death in Venice","r":"意大利","d":"1970年代","g":"剧情","n":"维斯康蒂·马勒配乐","s":"豆瓣 8.1","m":"130分钟"},{"y":"1973","t":"世界旦夕之间","o":"Welt am Draht","r":"西德","d":"1970年代","g":"科幻/悬疑","n":"法斯宾德·虚拟世界","s":"豆瓣 8.6","m":"101分钟×2集"},{"y":"1973","t":"往日情怀","o":"The Way We Were","r":"美国","d":"1970年代","g":"爱情/剧情","n":"西德尼·波拉克·史翠珊+雷德福","s":"豆瓣 8.1","m":"118分钟"},{"y":"1975","t":"圣地亚哥在下雨","o":"Il pleut sur Santiago","r":"智利","d":"1970年代","g":"剧情/政治","n":"智利政变题材","s":"豆瓣 8.4","m":"122分钟"},{"y":"1977","t":"特殊的一天","o":"Una giornata particolare","r":"意大利","d":"1970年代","g":"剧情","n":"斯科拉·罗兰+马塞洛","s":"豆瓣 8.3","m":"106分钟"},{"y":"1979","t":"铁皮鼓","o":"Die Blechtrommel","r":"西德/波兰/法国","d":"1970年代","g":"剧情/历史","n":"施隆多夫·戛纳金棕榈","s":"豆瓣 8.3","m":"142分钟"},{"y":"1981","t":"山猫","o":"Ryś","r":"波兰","d":"1980年代","g":"剧情/战争","n":"波兰游击队题材","s":"IMDb 5.8","m":"84分钟"},{"y":"1981","t":"体热","o":"Body Heat","r":"美国","d":"1980年代","g":"惊悚/犯罪","n":"新黑色电影","s":"豆瓣 7.6","m":"113分钟"},{"y":"1985","t":"不害臊的姑娘","o":"L'Effrontée","r":"法国","d":"1980年代","g":"喜剧/剧情","n":"克洛德·米勒","s":"豆瓣 7.7","m":"96分钟"},{"y":"1985","t":"重返奥兹国","o":"Return to Oz","r":"美国","d":"1980年代","g":"奇幻/冒险","n":"黑暗系绿野仙踪续篇","s":"豆瓣 8.0","m":"113分钟"},{"y":"1985","t":"蜘蛛女之吻","o":"Kiss of the Spider Woman","r":"美国/巴西","d":"1980年代","g":"剧情/同性","n":"巴班克·威廉·赫特","s":"豆瓣 8.2","m":"120分钟"},{"y":"1988","t":"小偷","o":"La Petite Voleuse","r":"法国","d":"1980年代","g":"剧情","n":"克洛德·米勒·甘斯布","s":"豆瓣 7.6","m":"83分钟"},{"y":"1991","t":"不羁的美女","o":"La Belle Noiseuse","r":"法国/瑞士","d":"1990年代","g":"剧情","n":"里维特·绘画题材","s":"豆瓣 7.4","m":"238分钟"},{"y":"1993","t":"不一样的天空","o":"What's Eating Gilbert Grape","r":"美国","d":"1990年代","g":"剧情/家庭","n":"莱昂纳多·迪卡普里奥成名作","s":"豆瓣 8.6","m":"118分钟"},{"y":"1993","t":"男孩的生活","o":"This Boy's Life","r":"美国","d":"1990年代","g":"剧情/传记","n":"德尼罗+小李子","s":"豆瓣 8.2","m":"115分钟"},{"y":"1993","t":"小活佛","o":"Little Buddha","r":"意大利","d":"1990年代","g":"剧情/传记","n":"贝托鲁奇","s":"IMDb 6.2","m":"123分钟"},{"y":"1993","t":"影子大地","o":"Shadowlands","r":"英国","d":"1990年代","g":"爱情/剧情","n":"C.S.刘易斯传记","s":"豆瓣 8.2","m":"131分钟"},{"y":"1994","t":"星际之门","o":"Stargate","r":"美国","d":"1990年代","g":"科幻/冒险","n":"罗兰·艾默里奇","s":"豆瓣 7.2","m":"121分钟"},{"y":"1994","t":"暴雨将至","o":"Пред дождот","r":"英国/法国/北马其顿","d":"1990年代","g":"剧情/爱情","n":"曼彻夫斯基·环形叙事","s":"豆瓣 8.6","m":"113分钟"},{"y":"1994","t":"邮差","o":"Il postino","r":"意大利/法国/比利时","d":"1990年代","g":"剧情/传记","n":"特罗西·聂鲁达","s":"豆瓣 8.8","m":"108分钟"},{"y":"1995","t":"边缘日记","o":"The Basketball Diaries","r":"美国","d":"1990年代","g":"犯罪/传记","n":"小李子主演","s":"豆瓣 8.2","m":"102分钟"},{"y":"1995","t":"冷酷祭典","o":"La cérémonie","r":"法国/德国","d":"1990年代","g":"惊悚/犯罪","n":"夏布洛尔·于佩尔","s":"豆瓣 8.0","m":"111分钟"},{"y":"1996","t":"弹簧刀","o":"Sling Blade","r":"美国","d":"1990年代","g":"剧情","n":"比利·鲍伯·松顿自编自导","s":"豆瓣 8.1","m":"135分钟"},{"y":"1998","t":"死亡密码π","o":"Pi","r":"美国","d":"1990年代","g":"科幻/惊悚","n":"阿罗诺夫斯基处女作","s":"","m":"84分钟"},{"y":"1999","t":"薄荷糖","o":"Peppermint Candy","r":"韩国","d":"1990年代","g":"剧情","n":"李沧东·倒叙人生","s":"豆瓣 8.6","m":"130分钟"},{"y":"1999","t":"蝴蝶的舌头","o":"La lengua de las mariposas","r":"西班牙","d":"1990年代","g":"剧情/战争","n":"西班牙内战背景","s":"豆瓣 8.5","m":"92分钟"},{"y":"1999","t":"西西里岛","o":"Sicilia!","r":"意大利","d":"1990年代","g":"剧情","n":"斯特劳布-于伊耶","s":"豆瓣 7.8","m":"66分钟"},{"y":"1999","t":"诺丁山","o":"Notting Hill","r":"英国","d":"1990年代","g":"爱情/喜剧","n":"休·格兰特+朱莉娅·罗伯茨","s":"豆瓣 8.0","m":"124分钟"},{"y":"1999","t":"女人讲脏话","o":"Women Talking Dirty","r":"英国","d":"1990年代","g":"喜剧/爱情","n":"英伦女性喜剧","s":"IMDb 6.0","m":"77分钟"},{"y":"1999","t":"十月的天空","o":"October Sky","r":"美国","d":"1990年代","g":"剧情/传记","n":"真实故事·火箭少年","s":"豆瓣 8.7","m":"108分钟"},{"y":"1999","t":"爱到尽头","o":"The End of the Affair","r":"美国","d":"1990年代","g":"爱情/剧情","n":"格雷厄姆·格林·拉尔夫·费因斯","s":"豆瓣 7.6","m":"102分钟"},{"y":"2000","t":"黑板","o":"تخته سیاه","r":"伊朗","d":"2000年代","g":"剧情","n":"玛克玛尔巴夫·战乱题材","s":"豆瓣 7.9","m":"85分钟"},{"y":"2000","t":"最美丽的夏天","o":"Den bästa sommaren","r":"瑞典","d":"2000年代","g":"家庭/喜剧","n":"瑞典温情家庭片","s":"豆瓣 7.9","m":"91分钟"},{"y":"2000","t":"大逃杀","o":"Battle Royale","r":"日本","d":"2000年代","g":"惊悚/动作","n":"深作欣二","s":"豆瓣 7.9","m":"114分钟"},{"y":"2001","t":"红磨坊","o":"Moulin Rouge!","r":"澳大利亚","d":"2000年代","g":"歌舞/爱情","n":"巴兹·鲁赫曼","s":"豆瓣 7.8","m":"127分钟"},{"y":"2001","t":"无主之地","o":"Ničija zemlja","r":"波黑","d":"2000年代","g":"剧情/战争","n":"奥斯卡最佳外语片","s":"豆瓣 8.6","m":"93分钟"},{"y":"2001","t":"坎大哈","o":"سفر قندهار","r":"伊朗/法国","d":"2000年代","g":"剧情","n":"马克马巴夫·阿富汗","s":"豆瓣 8.0","m":"85分钟"},{"y":"2002","t":"蛇蝎美人","o":"Femme Fatale","r":"法国","d":"2000年代","g":"惊悚/犯罪","n":"布莱恩·德·帕尔玛作品","s":"豆瓣 7.0","m":"114分钟"},{"y":"2002","t":"绿洲","o":"Oasis","r":"韩国","d":"2000年代","g":"爱情/剧情","n":"李沧东·威尼斯最佳导演","s":"豆瓣 8.6","m":"132分钟"},{"y":"2002","t":"纽约黑帮","o":"Gangs of New York","r":"美国","d":"2000年代","g":"犯罪/历史","n":"斯科塞斯·小李子","s":"豆瓣 7.6","m":"167分钟"},{"y":"2002","t":"战栗空间","o":"Panic Room","r":"美国","d":"2000年代","g":"惊悚/犯罪","n":"大卫·芬奇","s":"豆瓣 7.2","m":"112分钟"},{"y":"2004","t":"沉静如海","o":"Le silence de la mer","r":"法国","d":"2000年代","g":"爱情/战争","n":"二战德军军官与法国少女","s":"豆瓣 9.1","m":"93分钟"},{"y":"2004","t":"深海长眠","o":"Mar adentro","r":"西班牙","d":"2000年代","g":"剧情/传记","n":"阿梅纳瓦尔·奥斯卡","s":"豆瓣 8.3","m":"125分钟"},{"y":"2005","t":"爱你如诗美丽","o":"La tigre e la neve","r":"意大利","d":"2000年代","g":"喜剧/爱情","n":"罗伯托·贝尼尼","s":"豆瓣 8.0","m":"114分钟"},{"y":"2006","t":"变态者电影指南","o":"The Pervert's Guide to Cinema","r":"英国","d":"2000年代","g":"纪录片/论说","n":"齐泽克谈电影","s":"豆瓣 8.7","m":"150分钟"},{"y":"2006","t":"复活","o":"Renaissance","r":"法国","d":"2000年代","g":"动画/科幻","n":"黑白3D动画·巴黎2054","s":"豆瓣 7.2","m":"105分钟"},{"y":"2006","t":"听见天堂","o":"Rosso come il cielo","r":"意大利","d":"2000年代","g":"剧情/传记","n":"盲童音乐","s":"豆瓣 8.8","m":"96分钟"},{"y":"2007","t":"密阳","o":"Secret Sunshine","r":"韩国","d":"2000年代","g":"剧情","n":"李沧东·全度妍戛纳影后","s":"豆瓣 8.0","m":"142分钟"},{"y":"2008","t":"情留热那亚","o":"Genova","r":"英国","d":"2000年代","g":"剧情","n":"迈克尔·温特伯顿","s":"豆瓣 6.7","m":"94分钟"},{"y":"2009","t":"刺猬的优雅","o":"Le hérisson","r":"法国","d":"2000年代","g":"剧情/喜剧","n":"法国文艺片","s":"豆瓣 8.8","m":"100分钟"},{"y":"2009","t":"无姓之人","o":"Mr. Nobody","r":"比利时","d":"2000年代","g":"科幻/剧情","n":"范·多梅尔","s":"豆瓣 8.2","m":"141分钟"},{"y":"2009","t":"遁入虚无","o":"Enter the Void","r":"法国","d":"2000年代","g":"剧情/实验","n":"加斯帕·诺","s":"豆瓣 7.7","m":"161分钟"},{"y":"2009","t":"城市广场","o":"Ágora","r":"西班牙","d":"2000年代","g":"历史/剧情","n":"阿梅纳瓦尔·罗马埃及","s":"豆瓣 8.1","m":"127分钟"},{"y":"2010","t":"初恋这件小事","o":"First Love","r":"泰国","d":"2010年代","g":"爱情/喜剧","n":"泰国青春片","s":"豆瓣 8.5","m":"118分钟"},{"y":"2010","t":"快乐的人们","o":"Happy People","r":"德国","d":"2010年代","g":"纪录片","n":"赫尔佐格·西伯利亚泰加林","s":"豆瓣 8.7","m":"90分钟"},{"y":"2010","t":"诗","o":"Poetry","r":"韩国","d":"2010年代","g":"剧情","n":"李沧东·戛纳最佳编剧","s":"豆瓣 8.7","m":"139分钟"},{"y":"2011","t":"超脱","o":"Detachment","r":"美国","d":"2010年代","g":"剧情","n":"艾德里安·布洛迪","s":"豆瓣 9.0","m":"98分钟"},{"y":"2011","t":"龙纹身的女孩","o":"The Girl with the Dragon Tattoo","r":"美国/瑞典","d":"2010年代","g":"剧情/犯罪","n":"大卫·芬奇·千禧年三部曲","s":"豆瓣 8.1","m":"158分钟"},{"y":"2012","t":"弗兰西丝·哈","o":"Frances Ha","r":"美国","d":"2010年代","g":"喜剧/剧情","n":"鲍姆巴赫·黑白摄影","s":"豆瓣 8.5","m":"86分钟"},{"y":"2012","t":"变态者意识形态指南","o":"The Pervert's Guide to Ideology","r":"英国","d":"2010年代","g":"纪录片/论说","n":"齐泽克","s":"豆瓣 9.1","m":"136分钟"},{"y":"2013","t":"湖畔的陌生人","o":"L'Inconnu du lac","r":"法国","d":"2010年代","g":"惊悚/剧情","n":"阿兰·吉罗迪·戛纳最佳导演","s":"豆瓣 7.4","m":"100分钟"},{"y":"2013","t":"另一个故乡","o":"Die andere Heimat","r":"德国","d":"2010年代","g":"剧情/历史","n":"埃德加·赖茨史诗","s":"豆瓣 8.3","m":"231分钟"},{"y":"2013","t":"寂静人生","o":"Still Life","r":"英国","d":"2010年代","g":"剧情","n":"威尼斯获奖","s":"豆瓣 9.0","m":"92分钟"},{"y":"2014","t":"危楼愚夫","o":"Дурак","r":"俄罗斯","d":"2010年代","g":"剧情","n":"当代俄罗斯批判现实","s":"豆瓣 8.4","m":"120分钟"},{"y":"2014","t":"疯狂的爱","o":"Amour fou","r":"奥地利","d":"2010年代","g":"剧情/喜剧","n":"杰茜卡·豪斯纳·克莱斯特传记","s":"豆瓣 6.4","m":"96分钟"},{"y":"2014","t":"二重身","o":"Bilocation","r":"日本","d":"2010年代","g":"悬疑/惊悚","n":"日本分身悬疑","s":"豆瓣 7.3","m":"132分钟"},{"y":"2015","t":"凡人与超人","o":"Man and Superman (NTL)","r":"英国","d":"2010年代","g":"舞台/戏剧","n":"萧伯纳·国家剧院现场","s":"豆瓣 9.2","m":"220分钟"},{"y":"2015","t":"记住","o":"Remember","r":"加拿大","d":"2010年代","g":"剧情/惊悚","n":"阿托姆·伊戈扬","s":"豆瓣 8.2","m":"94分钟"},{"y":"2015","t":"刺客聂隐娘","o":"The Assassin","r":"中国台湾/中国大陆","d":"2010年代","g":"剧情/武侠","n":"侯孝贤·戛纳最佳导演","s":"豆瓣 7.3","m":"107分钟"},{"y":"2016","t":"沉默","o":"Silence","r":"美国","d":"2010年代","g":"历史/剧情","n":"斯科塞斯·远藤周作","s":"豆瓣 7.7","m":"161分钟"},{"y":"2018","t":"无主之作","o":"Werk ohne Autor","r":"德国","d":"2010年代","g":"剧情","n":"奥斯卡最佳外语片提名","s":"豆瓣 8.6","m":"189分钟"},{"y":"2018","t":"安东尼和克莉奥佩特拉","o":"Antony & Cleopatra (NTL)","r":"英国","d":"2010年代","g":"舞台/戏剧","n":"莎士比亚·国家剧院现场","s":"豆瓣 7.4","m":"229分钟"},{"y":"2020","t":"女人的碎片","o":"Pieces of a Woman","r":"美国","d":"2020年代","g":"剧情","n":"威尼斯影后凡妮莎·柯比","s":"豆瓣 7.7","m":"128分钟"},{"y":"2020","t":"曼克","o":"Mank","r":"美国","d":"2020年代","g":"剧情/传记","n":"大卫·芬奇·奥逊·威尔斯编剧","s":"豆瓣 7.3","m":"131分钟"},{"y":"2022","t":"手","o":"（待确认）","r":"待确认","d":"2020年代","g":"待确认","n":"信息待确认","s":"豆瓣 6.5","m":"99分钟"},{"y":"","t":"困惑的浪漫3","o":"Nekromantik 3","r":"德国","d":"未标注","g":"恐怖/邪典","n":"邪典恐怖系列·年份待确认","s":"暂无评分","m":"暂无"}]}
+const FT = DATA.FT, YT = DATA.YT, YALL = DATA.YALL;
+
+function wget(k){ try{ return window.localStorage.getItem(k)==='1'; }catch(e){ return false; } }
+function wset(k,v){ try{ window.localStorage.setItem(k, v?'1':'0'); }catch(e){} }
+const wkf = (t,f)=> 'watchf:'+t+':'+f;
+const wky = (t)=> 'watch:'+t;
+const ESC = s => String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const EDKEY='filmEdits';
+function getEdits(){ try{ return JSON.parse(window.localStorage.getItem(EDKEY)||'{}'); }catch(e){ return {}; } }
+function saveEdit(key, fields){ const ob=getEdits(); ob[key]=fields; try{ window.localStorage.setItem(EDKEY, JSON.stringify(ob)); }catch(e){} }
+function clearEdit(key){ const ob=getEdits(); if(ob[key]){ delete ob[key]; try{ window.localStorage.setItem(EDKEY, JSON.stringify(ob)); }catch(e){} } }
+function eff(f,key){ const ob=getEdits(); const ed=ob[key]; if(!ed) return f; return Object.assign({}, f, ed); }
+function keyOf(t,f){ return t._src==='f'? wkf(t.name,f.t) : wky(f.t); }
+function findFilmByKey(key){
+  let res=null;
+  FT.forEach(t=>{ t.films.forEach(f=>{ if(wkf(t.name,f.t)===key && !res) res={t:t,f:f}; }); });
+  if(!res) YALL.forEach(f=>{ if(wky(f.t)===key && !res) res={t:null,f:f}; });
+  return res;
+}
+function scoreNum(f){ const m=/(\d+(?:\.\d+)?)/.exec(f.s||''); return m?parseFloat(m[1]):null; }
+function scorePass(f){
+  const v=state.score; if(!v) return true;
+  const n=scoreNum(f);
+  if(v==='0') return n===null;
+  if(v==='8+') return n!==null && n>=8.0;
+  if(v==='0-6') return n!==null && n<6.0;
+  const p=v.split('-'); const lo=parseFloat(p[0]), hi=parseFloat(p[1]);
+  return n!==null && n>=lo && n<hi;
+}
+function durPass(f){
+  const v=state.dur; if(!v) return true;
+  const n=durNum(f);
+  if(v==='0') return n===null;
+  const p=v.split('-');
+  if(p[0]==='0') return n!==null && n<=parseFloat(p[1]);
+  if(p[1]==='') return n!==null && n>=parseFloat(p[0]);
+  const lo=parseFloat(p[0]), hi=parseFloat(p[1]);
+  return n!==null && n>=lo && n<=hi;
+}
+function filmPass(f){ return scorePass(f) && durPass(f); }
+// highlight matched query (q is plain string)
+function hl(text, q){
+  const s = ESC(text); if(!q) return s;
+  const low = s.toLowerCase(), lq = q.toLowerCase();
+  let out='', i=0, idx;
+  while((idx = low.indexOf(lq, i)) >= 0){
+    out += s.slice(i, idx) + '<mark>' + s.slice(idx, idx+q.length) + '</mark>';
+    i = idx + q.length;
+  }
+  return out + s.slice(i);
+}
+
+const F_REGION = {"梅雅·黛伦":"北美","南·戈尔丁":"北美","约翰·卡萨维蒂":"北美",
+ "大卫·里恩":"欧洲","马可·费雷里":"欧洲","米哈利斯·卡科伊亚尼斯":"欧洲","阿兰·卡瓦利埃":"欧洲","沃依切赫·马尔切夫斯基":"欧洲",
+ "奥图罗·利普斯坦":"拉美","团鬼六":"东亚","三船敏郎":"东亚",
+ "90分钟以内的佳作片单合集":"欧洲","恐怖片":"欧洲"};
+
+let state = { src:'all', region:'', q:'', score:'', dur:'', onlyUnwatched:false };
+
+function watchedCount(t){
+  let n=0;
+  t.films.forEach(f=>{ if(t._src==='f'? wget(wkf(t.name,f.t)) : wget(wky(f.t))) n++; });
+  return n;
+}
+function topicMatches(t){
+  if(state.src==='f' && t._src==='y') return false;
+  if(state.src==='y' && t._src==='f') return false;
+  if(state.region && t._src==='f' && F_REGION[t.name]!==state.region) return false;
+  if(state.q){
+    const q=state.q.toLowerCase();
+    const hay=(t.name+' '+(t.en||'')+' '+t.country+' '+(t.note||'')).toLowerCase();
+    if(hay.indexOf(q)<0 && !t.films.some(f=>(f.t||'').toLowerCase().indexOf(q)>=0)) return false;
+  }
+  if(state.onlyUnwatched && watchedCount(t)===t.films.length) return false;
+  return true;
+}
+
+function renderBrowse(){
+  const Fs=FT.filter(topicMatches), Ys=YT.filter(topicMatches);
+  let any=false;
+  const secA=[], secB=[], secC=[];
+  const order=["北美","欧洲","拉美","东亚","苏联"];
+  const label={"北美":"北美 · 美国 / 加拿大","欧洲":"欧洲 · 英法意波希·塞尔维亚","拉美":"拉美 · 墨西哥","东亚":"东亚 · 中/台/日","苏联":"苏联地区 · 苏联/亚美尼亚"};
+  let curReg=null, regItems=[];
+  function flushReg(){
+    if(!curReg) return;
+    const its=regItems.map(cardHTML).join('');
+    secA.push('<div class="group"><div class="ghead"><span class="gname">'+label[curReg]+'</span><span class="gsub">'+regItems.length+' 组</span></div><div class="grid">'+its+'</div></div>');
+    regItems=[];
+  }
+  Fs.forEach(t=>{
+    const reg=F_REGION[t.name]||'其他';
+    if(reg!==curReg){ flushReg(); curReg=reg; }
+    regItems.push(t); any=true;
+  });
+  flushReg();
+
+  Fs.filter(t=>t.theme).forEach(t=>{ secB.push(cardHTML(t)); any=true; });
+  Ys.forEach(t=>{ secC.push(cardHTML(t)); any=true; });
+
+  let h='';
+  if(secA.length) h+='<div class="sec" id="secA"><div class="sec-head"><span class="sec-no f">Ⅰ</span><h2>0分类 · 导演合集（11 组）</h2></div><div class="sec-sub">点击卡片底部按钮展开影片 · 蓝绿 = 0分类</div>'+secA.join('')+'</div>';
+  if(secB.length) h+='<div class="sec" id="secB"><div class="sec-head"><span class="sec-no f">Ⅱ</span><h2>0分类 · 主题合集（2 组）</h2></div><div class="sec-sub">同样来自「0分类」文件夹</div><div class="grid">'+secB.join('')+'</div></div>';
+  if(secC.length) h+='<div class="sec" id="secC"><div class="sec-head"><span class="sec-no y">Ⅲ</span><h2>0要看 · 大师与系列专题（11 组）</h2></div><div class="sec-sub">橙 = 0要看 · 每部均带豆瓣/IMDb 评分</div><div class="grid">'+secC.join('')+'</div></div>';
+  if(!any) h='<div class="empty">没有匹配的专题，试试清空搜索 / 筛选。</div>';
+  document.getElementById('browse').innerHTML=h;
+}
+
+function cardHTML(t){
+  const srcCls = t._src==='f'?'fc':'yc';
+  const srcBadge = t._src==='f'?'<span class="src src-f">0分类</span>':'<span class="src src-y">0要看</span>';
+  const wc=watchedCount(t), tot=t.films.length;
+  const pct = tot? Math.round(wc/tot*100):0;
+  const en = t.en? '<span class="ten">'+ESC(t.en)+'</span>':'';
+  const chips=[];
+  if(t.country) chips.push('<span class="chip">'+ESC(t.country)+'</span>');
+  chips.push('<span class="chip ch2">'+tot+' 部</span>');
+  if(t.span && !(t._src==='y')) chips.push('<span class="chip ch3">'+ESC(t.span)+'</span>');
+  if(t.remake) chips.push('<span class="chip ch4">导演重制</span>');
+  const vis = t.films.filter(function(f){ return filmPass(eff(f,keyOf(t,f))); }); if(!vis.length) return '';
+  const films = vis.map((f,i)=>filmRow(t,f,i+1)).join('');
+  const bCls = t._src==='f'?'':' onY';
+  return '<div class="tcard '+srcCls+'" data-id="'+t._id+'" data-src="'+t._src+'">'+srcBadge
+    +'<div class="tname">'+ESC(t.name)+en+'</div>'
+    +'<div class="tmeta">'+chips.join('')+'</div>'
+    +'<div class="tnote">'+ESC(t.note||'')+'</div>'
+    +'<div class="prog"><div class="prog-top"><span>已看 '+wc+' / '+tot+'</span><span>'+pct+'%</span></div><div class="prog-track"><div class="prog-fill" style="width:'+pct+'%"></div></div></div>'
+    +'<button class="expand-btn'+bCls+'" type="button">▾ 查看影片（'+tot+' 部）</button>'
+    +'<div class="films">'+films+'</div></div>';
+}
+
+function filmRow(t,f,i){
+  const key = keyOf(t,f);
+  const ef = eff(f,key);
+  const no='<span class="fno">'+i+'</span>';
+  let mid;
+  if(t._src==='f'){
+    mid='<span class="fy'+(ef.y==='—'||!ef.y?' fy-na':'')+'">'+ESC(ef.y||'—')+'</span>'
+      +'<span class="ft">'+ESC(ef.t)+'</span>'
+      +(ef.o?'<span class="fo">'+ESC(ef.o)+'</span>':'')
+      +(ef.s?'<span class="fscore">'+ESC(ef.s)+'</span>':'')
+      +(ef.m?'<span class="fdur">'+ESC(ef.m)+'</span>':'')
+      +(ef.x?'<span class="fx">'+ESC(ef.x)+'</span>':'');
+  } else {
+    mid='<span class="fy'+(ef.y==='null'||ef.y===''?' fy-na':'')+'">'+(ef.y==='null'||ef.y===''?'—':ESC(ef.y))+'</span>'
+      +'<span class="ft">'+ESC(ef.t)+'</span>'
+      +(ef.o?'<span class="fo">'+ESC(ef.o)+'</span>':'')
+      +(ef.s?'<span class="fscore">'+ESC(ef.s)+'</span>':'')
+      +(ef.m?'<span class="fdur">'+ESC(ef.m)+'</span>':'')
+      +(ef.n?'<span class="fo">'+ESC(ef.n)+'</span>':'');
+  }
+  const on = wget(key);
+  const bCls = t._src==='f'? 'wbtn' : 'wbtn onY';
+  return '<div class="frow" data-key="'+key+'" data-src="'+t._src+'">'+no+mid
+    +'<button class="ebtn" type="button" data-e="'+key+'" title="编辑影片信息">✎</button>'
+    +'<button class="'+bCls+(on?' on':'')+'" type="button" data-key="'+key+'" data-src="'+t._src+'">'+(on?'✓ 已看':'未看')+'</button></div>';
+}
+
+function renderResults(){
+  const box=document.getElementById('results');
+  const q=state.q.trim().toLowerCase();
+  if(!q){ box.classList.remove('show'); return; }
+  const list=[];
+  FT.forEach(t=>{ t.films.forEach(f=>{ if((f.t||'').toLowerCase().indexOf(q)>=0 || (f.o||'').toLowerCase().indexOf(q)>=0) list.push({src:'f',topic:t.name,f,f,t}); }); });
+  YALL.forEach(f=>{ if((f.t||'').toLowerCase().indexOf(q)>=0 || (f.o||'').toLowerCase().indexOf(q)>=0) list.push({src:'y',topic:'',f,t:null}); });
+  FT.forEach(t=>{ if((t.name||'').toLowerCase().indexOf(q)>=0) list.push({src:'f',topic:t.name,f:null,t}); });
+  YT.forEach(t=>{ if((t.name||'').toLowerCase().indexOf(q)>=0) list.push({src:'y',topic:t.name,f:null,t}); });
+  const seen={}; const out=[];
+  list.forEach(it=>{ const id=it.src+':'+(it.t?it.t.name:'')+':'+(it.f?it.f.t:''); if(seen[id])return; seen[id]=1; out.push(it); });
+  out.sort((a,b)=>(a.src===b.src?0:a.src==='f'?-1:1));
+  out=out.filter(it=>{
+    if(!it.f) return true;
+    const k = it.src==='f'? wkf(it.t.name,it.f.t) : wky(it.f.t);
+    return filmPass(eff(it.f,k));
+  });
+
+  const rows = out.map(it=>{
+    const isF = it.src==='f';
+    const rb = isF? '<span class="rb f">0分类</span>':'<span class="rb y">0要看</span>';
+    let mid;
+    if(it.f){
+      const f=it.f;
+      const rk = isF? wkf(it.t.name,f.t) : wky(f.t);
+      const ef=eff(f,rk);
+      mid='<span class="rname">'+hl(f.t,q)+'</span>'
+        +(ef.o?'<span class="rorig">'+hl(ef.o,q)+'</span>':'')
+        +(ef.s?'<span class="fscore">'+ESC(ef.s)+'</span>':'')
+        +(ef.m?'<span class="fdur">'+ESC(ef.m)+'</span>':'')
+        +(ef.y&&ef.y!=='null'&&ef.y!==''?'<span class="rtag">'+ESC(ef.y)+'</span>':'');
+    } else {
+      mid='<span class="rname">'+hl(it.t.name,q)+'</span><span class="rtag">专题</span>';
+    }
+    const topic = it.topic? '<span class="rtopic">'+ESC(it.topic)+'</span>':'';
+    const key = isF? (it.f? wkf(it.t.name,it.f.t): '') : (it.f? wky(it.f.t):'');
+    let btn='';
+    if(key){
+      const on=wget(key);
+      btn='<button class="ebtn" type="button" data-e="'+key+'" title="编辑影片信息">✎</button>'
+        +'<button class="'+(isF?'wbtn':'wbtn onY')+(on?' on':'')+'" type="button" data-key="'+key+'" data-src="'+it.src+'">'+(on?'✓ 已看':'未看')+'</button>';
+    }
+    return '<div class="rrow">'+rb+mid+topic+btn+'</div>';
+  }).join('');
+  document.getElementById('resTitle').textContent='搜索结果（'+out.length+'）';
+  document.getElementById('resList').innerHTML = rows||'<div class="empty">无匹配影片/专题</div>';
+  box.classList.add('show');
+}
+
+
+function renderYall(){
+  var box=document.getElementById('yallList'); if(!box) return;
+  var rows=YALL.map(function(f,i){
+    var key=wky(f.t); var ef=eff(f,key);
+    if(!filmPass(ef)) return '';
+    var on=wget(key);
+    var btn='<button class="ebtn" type="button" data-e="'+key+'" title="编辑影片信息">✎</button>'
+      +'<button class="wbtn onY'+(on?' on':'')+'" type="button" data-key="'+key+'" data-src="y">'+(on?'✓ 已看':'未看')+'</button>';
+    var chips=[];
+    if(ef.r) chips.push('<span class="ychip">'+ESC(ef.r)+'</span>');
+    if(ef.d) chips.push('<span class="ychip">'+ESC(ef.d)+'</span>');
+    if(ef.g) chips.push('<span class="ychip">'+ESC(ef.g)+'</span>');
+    if(ef.m) chips.push('<span class="ychip">'+ESC(ef.m)+'</span>');
+    return '<div class="yrow"><span class="ynum">'+(i+1)+'</span>'
+      +'<span class="yyear">'+((ef.y&&ef.y!=='null'&&ef.y!=='')?ESC(ef.y):'—')+'</span>'
+      +'<span class="yname">'+ESC(ef.t)+'</span>'
+      +(ef.o?'<span class="yorig">'+ESC(ef.o)+'</span>':'')
+      +(ef.s?'<span class="yscore">'+ESC(ef.s)+'</span>':'')
+      +'<span class="ychips">'+chips.join('')+'</span>'
+      +(ef.n?'<span class="ynote">'+ESC(ef.n)+'</span>':'')
+      +btn+'</div>';
+  }).join('');
+  box.innerHTML='<div class="yall-head">共 '+YALL.length+' 部 · 按上映时间排序 · 行尾按钮标记已看</div>'+rows;
+}
+function refreshCounts(){
+  let cy=0, cf=0;
+  YALL.forEach(f=>{ if(wget(wky(f.t))) cy++; });
+  FT.forEach(t=>{ t.films.forEach(f=>{ if(wget(wkf(t.name,f.t))) cf++; }); });
+  document.getElementById('wcountY').textContent=cy;
+  document.getElementById('wcountF').textContent=cf;
+  document.getElementById('statTot').textContent=(YALL.length+FT.reduce((a,t)=>a+t.films.length,0))+' 部';
+  const el=document.getElementById('fcount');
+  if(!el) return;
+  const fActive = state.q||state.region||state.score||state.dur||state.onlyUnwatched;
+  if(!fActive){ el.style.display='none'; el.textContent=''; return; }
+  let uf=0, uy=0;
+  const q=(state.q||'').trim().toLowerCase();
+  FT.forEach(t=>{
+    if(state.region && F_REGION[t.name]!==state.region) return;
+    t.films.forEach(f=>{
+      const kx=wkf(t.name,f.t);
+      if(!filmPass(eff(f,kx))) return;
+      if(q && (f.t||'').toLowerCase().indexOf(q)<0 && (f.o||'').toLowerCase().indexOf(q)<0) return;
+      if(!wget(kx)) uf++;
+    });
+  });
+  YALL.forEach(f=>{
+    const kx=wky(f.t);
+    if(!filmPass(eff(f,kx))) return;
+    if(q && (f.t||'').toLowerCase().indexOf(q)<0 && (f.o||'').toLowerCase().indexOf(q)<0) return;
+    if(!wget(kx)) uy++;
+  });
+  const cur=state.src;
+  if(cur==='f') el.textContent='筛选 · 0分类未看 '+uf;
+  else if(cur==='y') el.textContent='筛选 · 0要看未看 '+uy;
+  else el.textContent='筛选 · 0分类未看 '+uf+' / 0要看未看 '+uy;
+  el.style.display='';
+}
+
+function bind(){
+  const rb=document.getElementById('randBtn');
+  if(rb) rb.addEventListener('click', openRandom);
+  const rw=document.getElementById('randWrap');
+  if(rw) rw.addEventListener('click', function(e){
+    const t=e.target;
+    if(t.classList && t.classList.contains('rmask')){ rw.classList.remove('show'); return; }
+    const act=t.getAttribute && t.getAttribute('data-r');
+    if(!act) return;
+    if(act==='close' || act==='close2'){ rw.classList.remove('show'); return; }
+    if(act==='again'){ randCur=randOne(randCur?randCur.name:null); renderRand(true); return; }
+    if(act==='mark'){
+      if(randCur) wset(randCur.key,1);
+      refreshCounts();
+      randPool=collectUnwatched();
+      const wrap=document.getElementById('randWrap');
+      if(!randPool.length){ wrap.innerHTML='<div class="randcard"><div class="rand-empty">恭喜！全部影片都已标记为已看</div><div class="rand-actions"><button class="rand-close2" type="button" data-r="close2">关闭</button></div></div>'; return; }
+      randCur=randOne(randCur?randCur.name:null); renderRand(true);
+    }
+  });
+  const q=document.getElementById('q');
+  q.addEventListener('input', function(){ state.q=q.value; refresh(); });
+  document.querySelectorAll('#srcSeg button').forEach(b=>{
+    b.addEventListener('click', function(){
+      document.querySelectorAll('#srcSeg button').forEach(x=>{x.className='';});
+      state.src=b.getAttribute('data-src');
+      b.className = state.src==='f'?'on':(state.src==='y'?'onY':'on');
+      refresh();
+    });
+  });
+  document.getElementById('regionSel').addEventListener('change', function(e){ state.region=e.target.value; refresh(); });
+  document.getElementById('scoreSel').addEventListener('change', function(e){ state.score=e.target.value; refresh(); });
+  document.getElementById('durSel').addEventListener('change', function(e){ state.dur=e.target.value; refresh(); });
+  document.getElementById('onlyUnwatched').addEventListener('change', function(e){ state.onlyUnwatched=e.target.checked; refresh(); });
+  document.getElementById('resetBtn').addEventListener('click', function(){
+    state={src:'all',region:'',q:'',score:'',dur:'',onlyUnwatched:false};
+    q.value=''; document.getElementById('regionSel').value=''; document.getElementById('scoreSel').value='';
+    document.getElementById('randScoreSel').value='';
+    document.getElementById('randDurSel').value='';
+    document.getElementById('durSel').value='';
+    document.getElementById('onlyUnwatched').checked=false;
+    document.querySelectorAll('#srcSeg button').forEach(x=>x.className='');
+    document.querySelector('#srcSeg button[data-src="all"]').className='on';
+    refresh();
+  });
+  document.querySelectorAll('.navtabs button').forEach(b=>{
+    b.addEventListener('click', function(){
+      const id=b.getAttribute('data-scroll'); const el=document.getElementById(id);
+      if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+  document.addEventListener('click', function(ev){
+    const ebt=ev.target.closest('.ebtn');
+    if(ebt){ openEdit(ebt.getAttribute('data-e')); return; }
+    const btn=ev.target.closest('.wbtn');
+    if(btn){
+      const key=btn.getAttribute('data-key'); const src=btn.getAttribute('data-src');
+      const on=!wget(key); wset(key,on);
+      btn.textContent = on?'✓ 已看':'未看'; btn.classList.toggle('on',on);
+      refreshCounts();
+      const card=ev.target.closest('.tcard');
+      if(card){ const id=card.getAttribute('data-id'); const t=findTopic(id); if(t){ const wc=watchedCount(t); const pct=t.films.length?Math.round(wc/t.films.length*100):0; const pt=card.querySelector('.prog-top'); if(pt) pt.innerHTML='<span>已看 '+wc+' / '+t.films.length+'</span><span>'+pct+'%</span>'; const pf=card.querySelector('.prog-fill'); if(pf) pf.style.width=pct+'%'; } }
+      return;
+    }
+    const eb=ev.target.closest('.expand-btn');
+    if(eb){
+      const card=eb.closest('.tcard'); if(!card) return;
+      const open=card.classList.toggle('open');
+      eb.innerHTML = open? '▴ 收起影片' : '▾ 查看影片';
+      return;
+    }
+  });
+}
+function renderTOC(){
+  var acts=[
+    {name:'Ⅰ 第一幕 · 0分类导演合集', items:FT.filter(function(t){return !t.theme;})},
+    {name:'Ⅱ 第二幕 · 0分类主题合集', items:FT.filter(function(t){return t.theme;})},
+    {name:'Ⅲ 第三幕 · 0要看大师专题', items:YT}
+  ];
+  var body='';
+  acts.forEach(function(a){
+    if(!a.items.length) return;
+    body+='<div class="toc-act"><div class="toc-actname">'+a.name+'</div><div class="toc-items">'+
+      a.items.map(function(t){
+        return '<button type="button" class="toc-item" data-goto="'+t._id+'"><span class="toc-name">'+ESC(t.name)+(t.en?' <i>'+ESC(t.en)+'</i>':'')+'</span><span class="toc-n">'+t.films.length+'</span></button>';
+      }).join('')+'</div></div>';
+  });
+  body+='<div class="toc-act"><div class="toc-actname">Ⅳ 第四幕 · 0要看 全片单</div><div class="toc-items">'+
+    '<button type="button" class="toc-item" data-goto="secD"><span class="toc-name">0要看 全片单</span><span class="toc-n">'+YALL.length+'</span></button>'+
+    '</div></div>';
+  var el=document.getElementById('tocBody'); if(el) el.innerHTML=body;
+}
+function tocOffset(){
+  const tb=document.querySelector('.toolbar');
+  return tb ? Math.round(tb.getBoundingClientRect().height) + 16 : 80;
+}
+function scrollToTarget(el){
+  if(!el) return;
+  const off=tocOffset();
+  const top=el.getBoundingClientRect().top + window.pageYOffset - off;
+  window.scrollTo({top: Math.max(top,0), behavior:'smooth'});
+}
+function bindTOC(){
+  var el=document.getElementById('tocBody'); if(!el) return;
+  el.addEventListener('click', function(ev){
+    var it=ev.target.closest('.toc-item'); if(!it) return;
+    var id=it.getAttribute('data-goto');
+    if(id==='secD'){ scrollToTarget(document.getElementById('secD')); return; }
+    var card=document.querySelector('#browse .tcard[data-id="'+id+'"]');
+    if(!card){
+      state={src:'all',region:'',q:'',score:'',dur:'',onlyUnwatched:false};
+      var q=document.getElementById('q'); if(q) q.value='';
+      var rs=document.getElementById('regionSel'); if(rs) rs.value='';
+      var ss=document.getElementById('scoreSel'); if(ss) ss.value='';
+      var rss=document.getElementById('randScoreSel'); if(rss) rss.value='';
+      var rdu=document.getElementById('randDurSel'); if(rdu) rdu.value='';
+      var ds=document.getElementById('durSel'); if(ds) ds.value='';
+      var ow=document.getElementById('onlyUnwatched'); if(ow) ow.checked=false;
+      document.querySelectorAll('#srcSeg button').forEach(function(x){ x.className = x.getAttribute('data-src')==='all'?'on':''; });
+      refresh();
+      card=document.querySelector('#browse .tcard[data-id="'+id+'"]');
+    }
+    if(card) scrollToTarget(card);
+  });
+}
+function findTopic(id){ return FT.find(t=>t._id===id) || YT.find(t=>t._id===id); }
+
+var randPool=[], randCur=null;
+function collectUnwatched(){
+  const seen={}, out=[];
+  FT.forEach(t=>{ t.films.forEach(f=>{
+    if(!f.t || seen[f.t]) return;
+    if(wget(wkf(t.name,f.t))) return;
+    seen[f.t]=1;
+    const kf=wkf(t.name,f.t); const efs=eff(f,kf);
+    out.push({name:efs.t,o:efs.o,y:efs.y,r:efs.r,d:efs.d,g:efs.g,n:efs.n,s:efs.s,m:efs.m,key:kf,src:'f',topic:t.name});
+  }); });
+  YALL.forEach(f=>{
+    if(!f.t || seen[f.t]) return;
+    if(wget(wky(f.t))) return;
+    seen[f.t]=1;
+    const ky=wky(f.t); const eys=eff(f,ky);
+    out.push({name:eys.t,o:eys.o,y:eys.y,r:eys.r,d:eys.d,g:eys.g,n:eys.n,s:eys.s,m:eys.m,key:ky,src:'y',topic:''});
+  });
+  return out;
+}
+function randScorePass(f){
+  var el=document.getElementById('randScoreSel');
+  if(!el) return true;
+  var v=el.value; if(!v) return true;
+  var n=scoreNum(f);
+  if(v==='0') return n===null;
+  if(v==='8+') return n!==null && n>=8.0;
+  if(v==='0-6') return n!==null && n<6.0;
+  var p=v.split('-'); var lo=parseFloat(p[0]), hi=parseFloat(p[1]);
+  return n!==null && n>=lo && n<hi;
+}
+function durNum(f){
+  var dm=(f.m||'').match(/(\d+(?:\.\d+)?)\s*分/);
+  return dm?parseFloat(dm[1]):null;
+}
+function randDurPass(f){
+  var el=document.getElementById('randDurSel');
+  if(!el) return true;
+  var v=el.value; if(!v) return true;
+  var n=durNum(f);
+  if(v==='0') return n===null;
+  var p=v.split('-');
+  if(p[0]==='0') return n!==null && n<=parseFloat(p[1]);
+  if(p[1]==='') return n!==null && n>=parseFloat(p[0]);
+  var lo=parseFloat(p[0]), hi=parseFloat(p[1]);
+  return n!==null && n>=lo && n<=hi;
+}
+function randOne(exclude){
+  if(!randPool.length) return null;
+  var pick=randPool[Math.floor(Math.random()*randPool.length)];
+  if(exclude && randPool.length>1){
+    var guard=0;
+    while(pick.name===exclude && guard<50){ pick=randPool[Math.floor(Math.random()*randPool.length)]; guard++; }
+  }
+  return pick;
+}
+function randCardHTML(r, loading){
+  var meta=[];
+  var RANDF=[['y','chip plain'],['m','chip dur'],['s','chip score'],['r','chip plain'],['d','chip plain'],['g','chip plain']];
+  RANDF.forEach(function(it){ var v=r[it[0]]; if(v && v!=='null' && v!=='') meta.push('<span class="'+it[1]+'">'+ESC(v)+'</span>'); });
+  var tag = r.src==='f' ? '<span class="rand-tag">0分类 · '+ESC(r.topic)+'</span>' : '<span class="rand-tag">0要看 全片单</span>';
+  return '<div class="randcard">'
+    +'<div class="rand-top">'+tag+'<button class="rand-close" type="button" data-r="close" aria-label="关闭">✕</button></div>'
+    +'<div class="rand-title">'+(loading?'⋯ 抽取中 ⋯':'随机抽取 · 未看片单')+'</div>'
+    +'<div class="rand-name">'+ESC(r.name)+'</div>'
+    +(r.o?'<div class="rand-orig">'+ESC(r.o)+'</div>':'')
+    +'<div class="rand-meta">'+meta.join('')+'</div>'
+    +(r.n?'<div class="rand-note">'+ESC(r.n)+'</div>':'')
+    +'<div class="rand-actions">'
+    +'<button class="rand-again" type="button" data-r="again">换一部</button>'
+    +'<button class="rand-mark" type="button" data-r="mark">✓ 标记已看 · 再来一部</button>'
+    +'<button class="rand-close2" type="button" data-r="close2">关闭</button>'
+    +'</div></div>';
+}
+function renderRand(frozen){
+  const wrap=document.getElementById('randWrap'); if(!wrap || !randCur) return;
+  if(!frozen){ wrap.innerHTML=randCardHTML(randOne(randCur.name), true); return; }
+  wrap.innerHTML=randCardHTML(randCur, false);
+}
+function openRandom(){
+  var all=collectUnwatched();
+  randPool=all.filter(function(f){ return randScorePass(f) && randDurPass(f); });
+  const wrap=document.getElementById('randWrap'); if(!wrap) return;
+  if(!randPool.length){
+    var rmsg=all.length ? '当前评分与时长区间内没有未看影片，换个条件试试' : '恭喜！全部影片都已标记为已看';
+    wrap.innerHTML='<div class="randcard"><div class="rand-empty">'+rmsg+'</div><div class="rand-actions"><button class="rand-close2" type="button" data-r="close2">关闭</button></div></div>';
+    wrap.classList.add('show'); return;
+  }
+  randCur=randOne(null);
+  wrap.classList.add('show');
+  renderRand(false);
+  const frames=9; let k=0;
+  const iv=setInterval(function(){
+    k++;
+    if(k>=frames){ clearInterval(iv); renderRand(true); }
+    else renderRand(false);
+  },52);
+}
+var curEditKey=null;
+function openEdit(key){
+  const found=findFilmByKey(key); if(!found) return;
+  curEditKey=key;
+  const wrap=document.getElementById('editWrap'); if(!wrap) return;
+  const ef=eff(found.f,key);
+  document.getElementById('editName').textContent=found.f.t;
+  const map={edY:'y',edS:'s',edM:'m',edR:'r',edD:'d',edG:'g',edN:'n',edO:'o'};
+  for(const id in map){ const e=document.getElementById(id); if(e) e.value=(ef[map[id]]==null?'':String(ef[map[id]])); }
+  wrap.classList.add('show');
+}
+function closeEdit(){ const w=document.getElementById('editWrap'); if(w) w.classList.remove('show'); }
+function saveCurEdit(){
+  const w=document.getElementById('editWrap'); if(!w||!curEditKey) return;
+  const val=id=>{ const e=document.getElementById(id); return e?e.value.trim():''; };
+  saveEdit(curEditKey,{y:val('edY'),s:val('edS'),m:val('edM'),r:val('edR'),d:val('edD'),g:val('edG'),n:val('edN'),o:val('edO')});
+  w.classList.remove('show'); refresh(); refreshZoomAfterEdit();
+}
+function clearCurEdit(){
+  const w=document.getElementById('editWrap'); if(!w||!curEditKey) return;
+  clearEdit(curEditKey); w.classList.remove('show'); refresh(); refreshZoomAfterEdit();
+}
+(function(){
+  const ew=document.getElementById('editWrap'); if(!ew) return;
+  ew.addEventListener('click', function(e){
+    const t=e.target;
+    if(t.classList && t.classList.contains('rmask')){ closeEdit(); return; }
+    const a=t.getAttribute && t.getAttribute('data-e');
+    if(a==='close' || a==='close2'){ closeEdit(); return; }
+    if(t.id==='edSave'){ saveCurEdit(); return; }
+    if(t.id==='edClear'){ clearCurEdit(); return; }
+    if(t.id==='edCancel'){ closeEdit(); return; }
+  });
+})();
+var curZoomId=null;
+function renderZoom(){
+  const wrap=document.getElementById('zoomWrap'); if(!wrap) return;
+  const t=findTopic(curZoomId); if(!t) return;
+  document.getElementById('zoomTitle').textContent=t.name;
+  document.getElementById('zoomTag').textContent=(t._src==='f'?'0分类专题':'0要看大师专题');
+  const meta=[];
+  meta.push('<span class="chip ch2">'+t.films.length+' 部</span>');
+  if(t.en) meta.push('<span class="chip ch3">'+ESC(t.en)+'</span>');
+  if(t.country) meta.push('<span class="chip ch4">'+ESC(t.country)+'</span>');
+  if(t.span && t._src!=='y') meta.push('<span class="chip ch1">'+ESC(t.span)+'</span>');
+  if(t.note) meta.push('<span class="zoom-note">'+ESC(t.note)+'</span>');
+  document.getElementById('zoomMeta').innerHTML=meta.join('');
+  document.getElementById('zoomList').innerHTML=t.films.map(function(f,i){ return filmRow(t,f,i+1); }).join('');
+}
+function openZoom(id){ curZoomId=id; renderZoom(); const w=document.getElementById('zoomWrap'); if(w) w.classList.add('show'); }
+function closeZoom(){ const w=document.getElementById('zoomWrap'); if(w) w.classList.remove('show'); }
+function refreshZoomAfterEdit(){ const w=document.getElementById('zoomWrap'); if(w && w.classList.contains('show') && curZoomId) renderZoom(); }
+(function(){
+  const zw=document.getElementById('zoomWrap'); if(!zw) return;
+  zw.addEventListener('click', function(e){
+    const t=e.target;
+    if(t.classList && t.classList.contains('rmask')){ closeZoom(); return; }
+    const a=t.getAttribute && t.getAttribute('data-z');
+    if(a==='close' || a==='close2'){ closeZoom(); return; }
+  });
+  document.addEventListener('dblclick', function(ev){
+    if(ev.target.closest('.expand-btn,.wbtn,.ebtn')) return;
+    const card=ev.target.closest('.tcard');
+    if(!card) return;
+    openZoom(card.getAttribute('data-id'));
+  });
+})();
+function refresh(){ renderBrowse(); renderResults(); renderYall(); refreshCounts(); }
+
+(function(){
+  FT.forEach((t,i)=>{t._id='f'+i; t._src='f';});
+  YT.forEach((t,i)=>{t._id='y'+i; t._src='y';});
+(function(){
+  const tb=document.querySelector('.toolbar'); const tg=document.getElementById('tbToggle');
+  if(!tb||!tg) return;
+  const KEY='tbCollapsed';
+  function apply(c){ tb.classList.toggle('collapsed',c); tg.textContent=c?'▼':'▲'; tg.title=c?'展开工具栏':'收起工具栏'; }
+  let saved=null; try{ saved=window.localStorage.getItem(KEY); }catch(e){}
+  apply(saved==='1');
+  tg.addEventListener('click', function(){
+    const c=!tb.classList.contains('collapsed');
+    apply(c);
+    try{ window.localStorage.setItem(KEY,c?'1':'0'); }catch(e){}
+  });
+})();
+  bind(); renderTOC(); bindTOC(); refresh();
+})();
+
+(function(){
+  var KEY='topicTheme';
+  function setTheme(dark){
+    document.documentElement.setAttribute('data-theme', dark?'dark':'light');
+    var b=document.getElementById('themeToggle'); if(b) b.textContent=dark?'日场模式':'夜场模式';
+  }
+  try{
+    var saved=null; try{saved=window.localStorage.getItem(KEY);}catch(e){}
+    var dark = saved ? saved==='dark' : true;
+    setTheme(dark);
+    var b=document.getElementById('themeToggle');
+    if(b) b.addEventListener('click', function(){
+      var now=document.documentElement.getAttribute('data-theme')==='dark';
+      setTheme(!now); try{window.localStorage.setItem(KEY,!now?'dark':'light');}catch(e){}
+    });
+    try{
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e){
+        var s=null; try{s=window.localStorage.getItem(KEY);}catch(err){}
+        if(s) return; setTheme(e.matches);
+      });
+    }catch(e){}
+  }catch(e){ try{setTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);}catch(err){} }
+})();
+(function(){
+  var b=document.getElementById('toTop');
+  if(!b) return;
+  function upd(){ if(window.scrollY>420){ b.classList.add('show'); } else { b.classList.remove('show'); } }
+  upd();
+  window.addEventListener('scroll', upd, {passive:true});
+  b.addEventListener('click', function(){ try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); } });
+})();
+</script>
+</body>
+</html>
